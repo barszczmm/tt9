@@ -74,7 +74,8 @@ abstract class BaseMainLayout {
 	@RequiresApi(api = Build.VERSION_CODES.VANILLA_ICE_CREAM)
 	protected WindowInsets preventEdgeToEdge(@NonNull View v, @NonNull WindowInsets windowInsets) {
 		Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
-		ViewGroup.MarginLayoutParams layout = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
+		View mainWrapper = v.findViewById(R.id.main_wrapper);
+		ViewGroup.MarginLayoutParams layout = (ViewGroup.MarginLayoutParams) mainWrapper.getLayoutParams();
 		if (layout == null) {
 			return windowInsets;
 		}
@@ -82,7 +83,8 @@ abstract class BaseMainLayout {
 		layout.rightMargin = insets.right;
 		layout.bottomMargin = insets.bottom;
 		layout.leftMargin = insets.left;
-		v.setLayoutParams(layout);
+		mainWrapper.setLayoutParams(layout);
+
 		return WindowInsets.CONSUMED;
 	}
 
@@ -121,19 +123,24 @@ abstract class BaseMainLayout {
 		return 0;
 	}
 
+	int getMeasuredHeight() {
+		return getView().findViewById(R.id.main_wrapper).getMeasuredHeight();
+	}
+
 
 	boolean setHeight(int height) {
 		if (view == null) {
 			return false;
 		}
 
-		ViewGroup.LayoutParams params = view.getLayoutParams();
+		View mainWrapper = view.findViewById(R.id.main_wrapper);
+		ViewGroup.LayoutParams params = mainWrapper.getLayoutParams();
 		if (params == null) {
 			return false;
 		}
 
 		params.height = height;
-		view.setLayoutParams(params);
+		mainWrapper.setLayoutParams(params);
 		return true;
 	}
 

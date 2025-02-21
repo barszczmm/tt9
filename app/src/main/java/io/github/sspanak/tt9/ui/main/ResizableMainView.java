@@ -177,7 +177,7 @@ public class ResizableMainView extends MainView implements View.OnAttachStateCha
 			return false;
 		}
 
-		return setHeight(main.getView().getMeasuredHeight() + delta, minHeight, maxHeight);
+		return setHeight(main.getMeasuredHeight() + delta, minHeight, maxHeight);
 	}
 
 

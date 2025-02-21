@@ -10,6 +10,14 @@
 		<item name="android:layout_width">match_parent</item>
 		<item name="android:layout_height">wrap_content</item>
 		<item name="android:layoutDirection">ltr</item>
+		<item name="android:orientation">vertical</item>
+		<item name="android:background">@color/keyboard_background</item>
+	</style>
+
+	<style name="TTheme.FullScreenContainer.MainWrapper" parent="">
+		<item name="android:layout_width">match_parent</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:layoutDirection">ltr</item>
 		<item name="android:orientation">horizontal</item>
 	</style>
 
@@ -23,9 +31,7 @@
 
 	<style name="TTheme.Preferences" parent="Theme.AppCompat.DayNight" />
 
-	<style name="TTheme.Keyboard" parent="TTheme">
-		<item name="android:background">@color/keyboard_background</item>
-	</style>
+	<style name="TTheme.Keyboard" parent="TTheme" />
 
 	<style name="TTheme.Keyboard.Key.VersionStyle" parent="Widget.MaterialComponents.Button">
 		<item name="android:textAppearance">@style/TextAppearance.AppCompat.Medium</item>
