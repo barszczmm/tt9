@@ -216,14 +216,14 @@ class MainLayoutNumpad extends BaseMainLayout {
 		ViewGroup left = view.findViewById(R.id.numpad_column_fn_left);
 		keys.add(left.findViewById(R.id.soft_key_settings));
 		keys.add(left.findViewById(R.id.soft_key_add_word));
-		keys.add(left.findViewById(R.id.soft_key_shift));
-		keys.add(left.findViewById(R.id.soft_key_lf4));
+		keys.add(left.findViewById(R.id.soft_key_filter));
+		keys.add(left.findViewById(R.id.soft_key_rf3));
 
 		// right Fn
 		ViewGroup right = view.findViewById(R.id.numpad_column_fn_right);
 		keys.add(right.findViewById(R.id.soft_key_numpad_backspace));
-		keys.add(right.findViewById(R.id.soft_key_filter));
-		keys.add(right.findViewById(R.id.soft_key_rf3));
+		keys.add(right.findViewById(R.id.soft_key_shift));
+		keys.add(right.findViewById(R.id.soft_key_lf4));
 		keys.add(right.findViewById(R.id.soft_key_numpad_ok));
 
 		// digits panel
