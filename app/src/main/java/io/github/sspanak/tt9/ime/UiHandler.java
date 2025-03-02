@@ -1,6 +1,5 @@
 package io.github.sspanak.tt9.ime;
 
-import android.os.Build;
 import android.view.inputmethod.InputMethodManager;
 
 import io.github.sspanak.tt9.R;
@@ -10,6 +9,7 @@ import io.github.sspanak.tt9.ime.modes.InputModeKind;
 import io.github.sspanak.tt9.preferences.settings.SettingsStore;
 import io.github.sspanak.tt9.ui.main.ResizableMainView;
 import io.github.sspanak.tt9.ui.tray.StatusBar;
+import io.github.sspanak.tt9.util.SystemSettings;
 
 abstract class UiHandler extends AbstractHandler {
 	protected SettingsStore settings;
@@ -44,6 +44,7 @@ abstract class UiHandler extends AbstractHandler {
 		statusBar.setText(inputMode);
 		mainView.hideCommandPalette();
 		mainView.render();
+		SystemSettings.setNavigationBarDarkTheme(getWindow().getWindow(), settings.getDarkTheme());
 
 		if (!isInputViewShown()) {
 			updateInputViewShown();
@@ -78,7 +79,7 @@ abstract class UiHandler extends AbstractHandler {
 			return;
 		}
 
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+		if (DeviceInfo.AT_LEAST_ANDROID_9) {
 			requestShowSelf(DeviceInfo.isSonimGen2(getApplicationContext()) ? 0 : InputMethodManager.SHOW_IMPLICIT);
 		} else {
 			showWindow(true);

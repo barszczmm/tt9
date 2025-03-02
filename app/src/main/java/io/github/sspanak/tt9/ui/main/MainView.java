@@ -43,8 +43,15 @@ public class MainView {
 		return true;
 	}
 
-	public void forceCreate() {
+	public void destroy() {
 		main = null;
+	}
+
+	public void forceCreate() {
+		if (main != null) {
+			Logger.w(getClass().getSimpleName(), "MainView already exists. Re-creating by request.");
+			destroy();
+		}
 		if (!create()) {
 			Logger.w(getClass().getSimpleName(), "Invalid MainView setting. Creating default.");
 			main = new MainLayoutSmall(tt9);

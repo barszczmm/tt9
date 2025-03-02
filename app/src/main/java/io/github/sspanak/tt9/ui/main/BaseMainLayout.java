@@ -1,5 +1,6 @@
 package io.github.sspanak.tt9.ui.main;
 
+import android.graphics.Color;
 import android.graphics.Insets;
 import android.os.Build;
 import android.view.ContextThemeWrapper;
@@ -16,11 +17,15 @@ import androidx.core.view.WindowInsetsCompat;
 import java.util.ArrayList;
 
 import io.github.sspanak.tt9.R;
+import io.github.sspanak.tt9.hacks.DeviceInfo;
 import io.github.sspanak.tt9.ime.TraditionalT9;
 import io.github.sspanak.tt9.ui.main.keys.SoftKey;
 import io.github.sspanak.tt9.util.ThemedContextBuilder;
 
 abstract class BaseMainLayout {
+	protected int e2ePaddingBottomLandscape = -1;
+	protected int e2ePaddingBottomPortrait = -1;
+
 	protected final TraditionalT9 tt9;
 	private final int xml;
 
@@ -59,7 +64,7 @@ abstract class BaseMainLayout {
 
 
 	protected WindowInsets onApplyInsets(@NonNull View v, @NonNull WindowInsets windowInsets) {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+		if (DeviceInfo.AT_LEAST_ANDROID_15) {
 			return preventEdgeToEdge(v, windowInsets);
 		} else {
 			return windowInsets;
@@ -74,21 +79,41 @@ abstract class BaseMainLayout {
 	@RequiresApi(api = Build.VERSION_CODES.VANILLA_ICE_CREAM)
 	protected WindowInsets preventEdgeToEdge(@NonNull View v, @NonNull WindowInsets windowInsets) {
 		Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
-		ViewGroup.MarginLayoutParams layout = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
-		if (layout == null) {
-			return windowInsets;
+		v.setPadding(insets.left, 0, insets.right, insets.bottom);
+
+		// cache the padding for use when the insets are not available
+		if (e2ePaddingBottomLandscape < 0 || e2ePaddingBottomPortrait < 0) {
+			boolean isLandscape = DeviceInfo.isLandscapeOrientation(view.getContext());
+			if (isLandscape) {
+				e2ePaddingBottomLandscape = insets.bottom;
+			} else {
+				e2ePaddingBottomPortrait = insets.bottom;
+			}
 		}
 
-		layout.rightMargin = insets.right;
-		layout.bottomMargin = insets.bottom;
-		layout.leftMargin = insets.left;
-		v.setLayoutParams(layout);
 		return WindowInsets.CONSUMED;
 	}
 
 
+	/**
+	 * Similar to the above method, but reuses the last known padding. Useful for when the Main View
+	 * is re-created and it is not yet possible to get the new window insets.
+ 	 */
+	public void preventEdgeToEdge() {
+		if (tt9 == null || view == null || !DeviceInfo.AT_LEAST_ANDROID_15) {
+			return;
+		}
+
+		boolean isLandscape = DeviceInfo.isLandscapeOrientation(view.getContext());
+
+		int bottomPadding = isLandscape ? e2ePaddingBottomLandscape : e2ePaddingBottomPortrait;
+		bottomPadding = bottomPadding < 0 ? DeviceInfo.getNavigationBarHeight(view.getContext(), isLandscape) : bottomPadding;
+		view.setPadding(view.getPaddingLeft(), 0, view.getPaddingRight(), bottomPadding);
+	}
+
+
 	void requestPreventEdgeToEdge() {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM && view != null) {
+		if (view != null && DeviceInfo.AT_LEAST_ANDROID_15) {
 			view.requestApplyInsets();
 		}
 	}
@@ -122,18 +147,25 @@ abstract class BaseMainLayout {
 	}
 
 
-	boolean setHeight(int height) {
-		if (view == null) {
+	int getKeyboardHeight() {
+		View keyboard = view != null ? view.findViewById(R.id.keyboard_container) : null;
+		return keyboard != null ? keyboard.getMeasuredHeight() : 0;
+	}
+
+
+	boolean setKeyboardHeight(int height) {
+		View keyboard = view != null ? view.findViewById(R.id.keyboard_container) : null;
+		if (keyboard == null) {
 			return false;
 		}
 
-		ViewGroup.LayoutParams params = view.getLayoutParams();
+		ViewGroup.LayoutParams params = keyboard.getLayoutParams();
 		if (params == null) {
 			return false;
 		}
 
 		params.height = height;
-		view.setLayoutParams(params);
+		keyboard.setLayoutParams(params);
 		return true;
 	}
 
@@ -204,6 +236,45 @@ abstract class BaseMainLayout {
 
 		setBumperWidth(widthPercent, gravity);
 		setKeyboardWidth(widthPercent);
+	}
+
+
+	private boolean shouldEnableBackgroundBlending() {
+		if (view == null || tt9 == null) {
+			return true;
+		}
+
+		boolean isLandscape = DeviceInfo.isLandscapeOrientation(view.getContext());
+		int width = tt9.getSettings().getWidthPercent();
+
+		return
+			DeviceInfo.AT_LEAST_ANDROID_15
+			&& ((isLandscape && width >= 75) || (!isLandscape && width >= 65));
+	}
+
+
+	protected void setBackgroundBlending() {
+		if (view == null) {
+			return;
+		}
+
+		boolean yes = shouldEnableBackgroundBlending();
+
+		view.setBackgroundColor(
+				yes ? view.getContext().getResources().getColor(R.color.keyboard_background) : Color.TRANSPARENT
+		);
+
+		final int separatorVisibility = yes ? View.VISIBLE : View.GONE;
+
+		View leftBumperTopSeparator = view.findViewById(R.id.bumper_left_top_separator);
+		if (leftBumperTopSeparator != null) {
+			leftBumperTopSeparator.setVisibility(separatorVisibility);
+		}
+
+		View rightBumperTopSeparator = view.findViewById(R.id.bumper_right_top_separator);
+		if (rightBumperTopSeparator != null) {
+			rightBumperTopSeparator.setVisibility(separatorVisibility);
+		}
 	}
 
 

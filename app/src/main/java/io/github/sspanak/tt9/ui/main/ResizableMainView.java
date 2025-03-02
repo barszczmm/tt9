@@ -1,11 +1,11 @@
 package io.github.sspanak.tt9.ui.main;
 
-import android.os.Build;
 import android.view.Gravity;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 
+import io.github.sspanak.tt9.hacks.DeviceInfo;
 import io.github.sspanak.tt9.ime.TraditionalT9;
 import io.github.sspanak.tt9.preferences.settings.SettingsStore;
 import io.github.sspanak.tt9.ui.Vibration;
@@ -29,7 +29,7 @@ public class ResizableMainView extends MainView implements View.OnAttachStateCha
 
 
 	private void calculateSnapHeights() {
-		boolean forceRecalculate = Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM;
+		boolean forceRecalculate = DeviceInfo.AT_LEAST_ANDROID_15;
 
 		heightNumpad = new MainLayoutNumpad(tt9).getHeight(forceRecalculate);
 		heightSmall = new MainLayoutSmall(tt9).getHeight(forceRecalculate);
@@ -51,14 +51,21 @@ public class ResizableMainView extends MainView implements View.OnAttachStateCha
 		return true;
 	}
 
-	public void removeListeners() {
+
+	@Override
+	public void destroy() {
 		if (main != null && main.getView() != null) {
 			main.getView().removeOnAttachStateChangeListener(this);
 		}
+		super.destroy();
 	}
 
-	@Override public void onViewAttachedToWindow(@NonNull View v) { setHeight(height, heightSmall, heightNumpad); }
+
 	@Override public void onViewDetachedFromWindow(@NonNull View v) {}
+	@Override public void onViewAttachedToWindow(@NonNull View v) {
+		main.preventEdgeToEdge();
+		setHeight(height, heightSmall, heightNumpad);
+	}
 
 
 	public void onOrientationChanged() {
@@ -173,11 +180,12 @@ public class ResizableMainView extends MainView implements View.OnAttachStateCha
 
 
 	private boolean changeHeight(int delta, int minHeight, int maxHeight) {
-		if (main == null || main.getView() == null) {
+		int keyboardHeight = main.getKeyboardHeight();
+		if (keyboardHeight == 0) {
 			return false;
 		}
 
-		return setHeight(main.getView().getMeasuredHeight() + delta, minHeight, maxHeight);
+		return setHeight(keyboardHeight + delta, minHeight, maxHeight);
 	}
 
 
@@ -187,7 +195,7 @@ public class ResizableMainView extends MainView implements View.OnAttachStateCha
 		}
 
 		height = Math.min(height, maxHeight);
-		if (main.setHeight(height)) {
+		if (main.setKeyboardHeight(height)) {
 			this.height = height;
 			return true;
 		}
