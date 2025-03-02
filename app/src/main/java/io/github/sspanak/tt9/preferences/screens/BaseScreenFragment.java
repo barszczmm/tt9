@@ -1,12 +1,12 @@
 package io.github.sspanak.tt9.preferences.screens;
 
-import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
 import androidx.preference.PreferenceFragmentCompat;
 
+import io.github.sspanak.tt9.hacks.DeviceInfo;
 import io.github.sspanak.tt9.preferences.PreferencesActivity;
 import io.github.sspanak.tt9.preferences.custom.ScreenPreferencesList;
 import io.github.sspanak.tt9.preferences.settings.SettingsUI;
@@ -73,7 +73,7 @@ abstract public class BaseScreenFragment extends PreferenceFragmentCompat {
 	@Override
 	public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 		if (item.getItemId() == android.R.id.home && activity != null && !super.onOptionsItemSelected(item)) {
-			activity.onBackPressed();
+			activity.onBackPressedCallback.handleOnBackPressed();
 			return true;
 		}
 
@@ -97,7 +97,7 @@ abstract public class BaseScreenFragment extends PreferenceFragmentCompat {
 	public void resetFontSize(boolean reloadList) {
 		initPreferencesList();
 		preferencesList.getAll(reloadList, true);
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+		if (DeviceInfo.AT_LEAST_ANDROID_12) {
 			preferencesList.setFontSize(SettingsUI.FONT_SIZE_DEFAULT);
 		} else {
 			preferencesList.setFontSize(activity.getSettings().getSettingsFontSize());
