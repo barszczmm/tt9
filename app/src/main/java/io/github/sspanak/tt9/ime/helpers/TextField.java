@@ -27,22 +27,27 @@ public class TextField extends InputField {
 	private final boolean isNonText;
 
 
-	public TextField(InputConnection inputConnection, EditorInfo inputField) {
+	public TextField(SettingsStore settings, InputConnection inputConnection, EditorInfo inputField) {
 		super(inputConnection, inputField);
 
 		InputType inputType = new InputType(inputConnection, inputField);
-		isComposingSupported = !inputType.isNumeric() && !inputType.isLimited() && !inputType.isRustDesk() && !inputType.isDeezerSearchBar();
+		isComposingSupported = !inputType.isNumeric() && !inputType.isLimited() && !inputType.isRustDesk() && (settings == null || settings.getAllowComposingText());
 		isNonText = !inputType.isText();
 	}
 
 
-	public String getStringAfterCursor(int numberOfChars) {
+	public boolean isEmpty() {
+		return getStringBeforeCursor(1).isEmpty() && getStringAfterCursor(1).isEmpty();
+	}
+
+
+	@NonNull public String getStringAfterCursor(int numberOfChars) {
 		CharSequence chars = connection != null ? connection.getTextAfterCursor(numberOfChars, 0) : null;
 		return chars != null ? chars.toString() : "";
 	}
 
 
-	public String getStringBeforeCursor(int numberOfChars) {
+	@NonNull public String getStringBeforeCursor(int numberOfChars) {
 		CharSequence chars = connection != null ? connection.getTextBeforeCursor(numberOfChars, 0) : null;
 		return chars != null ? chars.toString() : "";
 	}
@@ -52,17 +57,17 @@ public class TextField extends InputField {
 	 * getStringBeforeCursor
 	 * A simplified helper that return up to 50 characters before the cursor and "just works".
 	 */
-	public String getStringBeforeCursor() {
+	@NonNull public String getStringBeforeCursor() {
 		return getStringBeforeCursor(50);
 	}
 
 
-	public Text getTextAfterCursor(int numberOfChars) {
+	@NonNull public Text getTextAfterCursor(int numberOfChars) {
 		return new Text(getStringAfterCursor(numberOfChars));
 	}
 
 
-	public Text getTextBeforeCursor() {
+	@NonNull public Text getTextBeforeCursor() {
 		return new Text(getStringBeforeCursor());
 	}
 
@@ -207,7 +212,7 @@ public class TextField extends InputField {
 
 		connection.beginBatchEdit();
 		String beforeText = getStringBeforeCursor(searchText.length());
-		if (beforeText == null || !beforeText.equals(searchText)) {
+		if (!beforeText.equals(searchText)) {
 			connection.endBatchEdit();
 			return;
 		}
@@ -230,7 +235,7 @@ public class TextField extends InputField {
 
 		connection.beginBatchEdit();
 		String beforeText = getStringBeforeCursor(word.length());
-		if (beforeText == null || !beforeText.equals(word)) {
+		if (!beforeText.equals(word)) {
 			connection.endBatchEdit();
 			return;
 		}

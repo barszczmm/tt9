@@ -50,17 +50,6 @@ public class InputType extends StandardInputType {
 
 
 	/**
-	 * isDeezerSearchBar
-	 * The field for searching songs and artists in Deezer does not support composing text, which
-	 * prevents the user from typing normally. This hack detects the search field, so that we can
-	 * disable composing at the right place.
-	 */
-	public boolean isDeezerSearchBar() {
-		return isAppInput("deezer.android.app", 32769) && field.imeOptions == 33554438;
-	}
-
-
-	/**
 	 * isDuoLingoReportBug
 	 * When reporting a bug in the Duolingo app, the text field is missing the TYPE_TEXT flag, which
 	 * causes us to detect it as a numeric field. This effectively disables Predictive mode, which is
@@ -105,7 +94,7 @@ public class InputType extends StandardInputType {
 	public boolean isLgX100SDialer() {
 		int imeOptions = EditorInfo.IME_ACTION_DONE | EditorInfo.IME_FLAG_NO_ENTER_ACTION;
 		return
-			DeviceInfo.isLgX100S()
+			DeviceInfo.IS_LG_X100S
 			&& isAppField("com.android.contacts", EditorInfo.TYPE_CLASS_PHONE)
 			&& ((field.imeOptions & imeOptions) == imeOptions);
 	}
@@ -143,7 +132,7 @@ public class InputType extends StandardInputType {
 	 */
 	boolean isSonimSearchField(int action) {
 		return
-			DeviceInfo.isSonim() &&
+			DeviceInfo.IS_SONIM &&
 			field != null && (field.packageName.startsWith("com.android") || field.packageName.startsWith("com.sonim"))
 			&& (field.imeOptions & EditorInfo.IME_MASK_ACTION) == action
 			&& (
@@ -162,19 +151,6 @@ public class InputType extends StandardInputType {
 	 */
 	public boolean isTermux() {
 		return isAppField("com.termux", EditorInfo.TYPE_NULL) && field.fieldId > 0;
-	}
-
-
-	/**
-	 * isViber
-	 * When sending messages using the Viber's SEND button, it does so and clears the text field,
-	 * but without notifying the keyboard. This means, after sending the message, the InputMode still
-	 * holds the old text, while the text field is empty. Attempting to type a new word then results
-	 * in appending to the old word. We use this hack to detect Viber and reset the InputMode upon
-	 * sending a message.
-	 */
-	public boolean isViber() {
-		return isAppField("com.viber.voip", EditorInfo.TYPE_CLASS_TEXT | EditorInfo.TYPE_TEXT_FLAG_MULTI_LINE);
 	}
 
 

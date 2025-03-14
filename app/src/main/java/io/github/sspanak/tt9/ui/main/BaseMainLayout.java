@@ -65,7 +65,8 @@ abstract class BaseMainLayout {
 
 	protected WindowInsets onApplyInsets(@NonNull View v, @NonNull WindowInsets windowInsets) {
 		if (DeviceInfo.AT_LEAST_ANDROID_15) {
-			return preventEdgeToEdge(v, windowInsets);
+			preventEdgeToEdge(v, windowInsets);
+			return WindowInsets.CONSUMED;
 		} else {
 			return windowInsets;
 		}
@@ -77,7 +78,7 @@ abstract class BaseMainLayout {
 	 * the bottom of the View will be cut off by the system navigation bar.
 	 */
 	@RequiresApi(api = Build.VERSION_CODES.VANILLA_ICE_CREAM)
-	protected WindowInsets preventEdgeToEdge(@NonNull View v, @NonNull WindowInsets windowInsets) {
+	protected void preventEdgeToEdge(@NonNull View v, @NonNull WindowInsets windowInsets) {
 		Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
 		v.setPadding(insets.left, 0, insets.right, insets.bottom);
 
@@ -90,8 +91,6 @@ abstract class BaseMainLayout {
 				e2ePaddingBottomPortrait = insets.bottom;
 			}
 		}
-
-		return WindowInsets.CONSUMED;
 	}
 
 
@@ -107,7 +106,7 @@ abstract class BaseMainLayout {
 		boolean isLandscape = DeviceInfo.isLandscapeOrientation(view.getContext());
 
 		int bottomPadding = isLandscape ? e2ePaddingBottomLandscape : e2ePaddingBottomPortrait;
-		bottomPadding = bottomPadding < 0 ? DeviceInfo.getNavigationBarHeight(view.getContext(), isLandscape) : bottomPadding;
+		bottomPadding = bottomPadding < 0 ? DeviceInfo.getNavigationBarHeight(view.getContext(), tt9.getSettings(), isLandscape) : bottomPadding;
 		view.setPadding(view.getPaddingLeft(), 0, view.getPaddingRight(), bottomPadding);
 	}
 

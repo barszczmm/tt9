@@ -21,6 +21,10 @@ class Punctuation {
 		',', '-', '\'', ':', ';', '!', '?', '.'
 	));
 
+	final public static ArrayList<Character> CombiningPunctuationFarsi = new ArrayList<>(Arrays.asList(
+		'،', ZWNJ.charAt(0), '-', '\'', ':', '؛', '!', '؟', '.'
+	));
+
 	final private static ArrayList<Character> CombiningPunctuationGujarati = new ArrayList<>(Arrays.asList(
 		'્', '઼', 'ઽ', 'ઃ', '।', '॰', '॥' // Indic combining chars look the same, but have different Unicode values
 	));
@@ -41,6 +45,8 @@ class Punctuation {
 		",", ".", "-", "(", ")", "&", "~", "`", ";", ":", "'", "\"", "!", "?"
 	));
 
+	final public static ArrayList<String> PunctuationFarsi = insertChar(PunctuationArabic, ZWNJ, "-");
+
 	final public static ArrayList<String> PunctuationFrench = new ArrayList<>(Arrays.asList(
 		",", ".", "-", "«", "»", "(", ")", "&", "`", "~", ";", ":", "'", "\"", "!", "?"
 	));
@@ -53,6 +59,8 @@ class Punctuation {
 		",", ".", "-", "«", "»", "(", ")", "&", "~", "`", "'", "\"", "·", ":", "!", GR_QUESTION_MARK
 	));
 
+	final public static ArrayList<String> PunctuationIrish = insertChar(PunctuationEnglish, "⁊", "&");
+
 	final public static ArrayList<String> PunctuationIndic = new ArrayList<>(Arrays.asList(
 		",", ".", "-", ZWJ, ZWNJ, "(", ")", "।", "॰", "॥", "&", "~", "`", ";", ":", "'", "\"", "!", "?"
 	));
@@ -64,6 +72,7 @@ class Punctuation {
 	public static boolean isCombiningPunctuation(Language language, char ch) {
 		return
 			CombiningPunctuation.contains(ch)
+			|| (LanguageKind.isFarsi(language) && CombiningPunctuationFarsi.contains(ch))
 			|| (LanguageKind.isGujarati(language) && CombiningPunctuationGujarati.contains(ch))
 			|| (LanguageKind.isHindi(language) && CombiningPunctuationHindi.contains(ch))
 			|| (LanguageKind.isHebrew(language) && CombiningPunctuationHebrew.contains(ch));
@@ -72,8 +81,15 @@ class Punctuation {
 	public static boolean isCombiningPunctuation(char ch) {
 		return
 			CombiningPunctuation.contains(ch)
+			|| CombiningPunctuationFarsi.contains(ch)
 			|| CombiningPunctuationGujarati.contains(ch)
 			|| CombiningPunctuationHindi.contains(ch)
 			|| CombiningPunctuationHebrew.contains(ch);
+	}
+
+	private static ArrayList<String> insertChar(ArrayList<String> list, String newChar, String afterChar) {
+		ArrayList<String> newList = new ArrayList<>(list);
+		newList.add(list.indexOf(afterChar) + 1, newChar);
+		return newList;
 	}
 }
