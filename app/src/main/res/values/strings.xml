@@ -47,6 +47,8 @@
 	<string name="pref_abc_auto_accept_fast">Quick</string>
 	<string name="pref_abc_auto_accept_normal">Moderate</string>
 	<string name="pref_abc_auto_accept_slow">Slow</string>
+	<string name="pref_allow_composing_text">Show Composing Text</string>
+	<string name="pref_allow_composing_text_summary">Display the words in text fields while typing them. Disable when an app interrupts typing.</string>
 	<string name="pref_alternative_suggestion_scrolling">Alternative Suggestion Scrolling Method</string>
 	<string name="pref_alternative_suggestion_scrolling_summary">Enable if sometimes you can not see all suggestions or have trouble scrolling them.</string>
 	<string name="pref_arrow_keys_visible">Arrow Keys</string>
@@ -152,6 +154,10 @@
 	<string name="donate_hold_to_open">Press and hold to open in the browser.</string>
 	<string name="donate_url" translatable="false">https://www.buymeacoffee.com/sspanak</string>
 
+	<string name="function_already_assigned">Key \"%1$s\" is already assigned to function \"%2$s\". Do you want to assign it to \"%3$s\"?</string>
+	<string name="function_assign_instructions">* Press or hold a key to assign it to the \"%1$s\" function.\n\n* Press 0 to cancel.\n\n* Press 2 to disable the function.</string>
+	<string name="function_reassign">Reassign</string>
+
 	<string name="function_add_word">Add Word</string>
 	<string name="function_add_word_not_available">Adding words is not possible in this language.</string>
 	<string name="function_backspace">Backspace</string>
@@ -195,6 +201,7 @@
 	<string name="setup_spell_checker_on">System spell checker may interfere with adding words. Click here to disable.</string>
 	<string name="setup_spell_checker_off">Disabled</string>
 
+	<string name="key_key">Key</string>
 	<string name="key_hold_key">(hold)</string>
 	<string name="key_none" translatable="false">--</string>
 	<string name="key_back">Back</string>
@@ -238,6 +245,7 @@
 	<string name="voice_input_error_generic">Voice input error</string>
 	<string name="voice_input_error_no_permissions">No microphone permission</string>
 	<string name="voice_input_error_language_not_supported">Language not supported</string>
+	<string name="voice_input_error_language_missing">Language missing from device</string>
 	<string name="voice_input_error_network_failed">Network connection failed</string>
 	<string name="voice_input_error_no_network">No Internet connection</string>
 	<string name="voice_input_error_not_available">Voice input is not available</string>
