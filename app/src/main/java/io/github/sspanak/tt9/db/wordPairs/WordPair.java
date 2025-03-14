@@ -35,6 +35,12 @@ public class WordPair {
 
 
 	@NonNull
+	public String getWord1() {
+		return word1;
+	}
+
+
+	@NonNull
 	public String getWord2() {
 		return word2;
 	}

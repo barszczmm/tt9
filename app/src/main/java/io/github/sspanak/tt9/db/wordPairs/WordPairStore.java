@@ -25,6 +25,7 @@ public class WordPairStore extends BaseSyncStore {
 
 	// data
 	private final ConcurrentHashMap<Integer, HashMap<WordPair, WordPair>> pairs = new ConcurrentHashMap<>();
+	private final ConcurrentHashMap<Integer, HashMap<String, ArrayList<String>>> suggestions = new ConcurrentHashMap<>();
 
 	// timing
 	private long slowestAddTime = 0;
@@ -35,6 +36,35 @@ public class WordPairStore extends BaseSyncStore {
 
 	public WordPairStore(Context context) {
 		super(context);
+	}
+
+
+	private void addNextWordSuggestion(HashMap<String, ArrayList<String>> languageSuggestions, String word1, String word2) {
+		ArrayList<String> nextWordSuggestions = languageSuggestions.get(word1);
+		if (nextWordSuggestions == null) {
+			nextWordSuggestions = new ArrayList<>();
+			nextWordSuggestions.add(word2);
+		} else {
+			int word2Index = nextWordSuggestions.indexOf(word2);
+			if (word2Index < 0) {
+				nextWordSuggestions.add(0, word2);
+			} else {
+				// Order in the array matters: last added word will be suggested as first in suggestions list.
+				nextWordSuggestions.remove(word2Index);
+				nextWordSuggestions.add(0, word2);
+			}
+		}
+	}
+
+	private void addToNextWordSuggestions(Language language, String word1, String word2) {
+		HashMap<String, ArrayList<String>> languageSuggestions = suggestions.get(language.getId());
+		if (languageSuggestions == null) {
+			languageSuggestions = new HashMap<>();
+			suggestions.put(language.getId(), languageSuggestions);
+		}
+		word1 = word1.toLowerCase(language.getLocale());
+		word2 = word2.toLowerCase(language.getLocale());
+		addNextWordSuggestion(languageSuggestions, word1, word2);
 	}
 
 
@@ -59,12 +89,15 @@ public class WordPairStore extends BaseSyncStore {
 
 		languagePairs.put(pair, pair);
 
+		addToNextWordSuggestions(language, word1, word2);
+
 		slowestAddTime = Math.max(slowestAddTime, Timer.stop(ADD_TIMER_NAME));
 	}
 
 
 	public void clearCache() {
 		pairs.clear();
+		suggestions.clear();
 		slowestAddTime = 0;
 		slowestSearchTime = 0;
 		slowestSaveTime = 0;
@@ -89,6 +122,26 @@ public class WordPairStore extends BaseSyncStore {
 
 		slowestSearchTime = Math.max(slowestSearchTime, Timer.stop(SEARCH_TIMER_NAME));
 		return word2;
+	}
+
+
+	@Nullable
+	public ArrayList<String> getNextWordSuggestions(Language language, String word1) {
+		String SEARCH_TIMER_NAME = "word_pairs_search";
+		Timer.start(SEARCH_TIMER_NAME);
+
+		HashMap<String, ArrayList<String>> languageSuggestions = suggestions.get(language.getId());
+
+		if (languageSuggestions == null) {
+			slowestSearchTime = Math.max(slowestSearchTime, Timer.stop(SEARCH_TIMER_NAME));
+			return null;
+		}
+
+		word1 = word1.toLowerCase(language.getLocale());
+		ArrayList<String> nextWordSuggestions = languageSuggestions.get(word1);
+
+		slowestSearchTime = Math.max(slowestSearchTime, Timer.stop(SEARCH_TIMER_NAME));
+		return nextWordSuggestions;
 	}
 
 
@@ -150,10 +203,19 @@ public class WordPairStore extends BaseSyncStore {
 				continue;
 			}
 
+			HashMap<String, ArrayList<String>> languageSuggestions = suggestions.get(language.getId());
+			if (languageSuggestions == null) {
+				languageSuggestions = new HashMap<>();
+				suggestions.put(language.getId(), languageSuggestions);
+			} else if (!languageSuggestions.isEmpty()) {
+				languageSuggestions.clear();
+			}
+
 			int max = SettingsStore.WORD_PAIR_MAX - wordPairs.size();
 			ArrayList<WordPair> dbPairs = new ReadOps().getWordPairs(sqlite.getDb(), language, max);
 			for (WordPair pair : dbPairs) {
 				wordPairs.put(pair, pair);
+				addNextWordSuggestion(languageSuggestions, pair.getWord1(), pair.getWord2());
 			}
 
 			Logger.d(LOG_TAG, "Loaded " + wordPairs.size() + " word pairs for language: " + language.getId());

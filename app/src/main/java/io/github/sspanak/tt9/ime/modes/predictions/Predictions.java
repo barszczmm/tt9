@@ -117,6 +117,11 @@ abstract public class Predictions {
 	}
 
 
+	public ArrayList<String> getNextWordSuggestions(String word) {
+		return DataStore.getNextWordSuggestions(language, word);
+	}
+
+
 	abstract public void onAccept(String word, String sequence);
 	abstract protected boolean isRetryAllowed();
 	abstract protected void onDbWords(ArrayList<String> dbWords, boolean retryAllowed);

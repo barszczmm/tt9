@@ -155,6 +155,11 @@ public class DataStore {
 	}
 
 
+	public static ArrayList<String> getNextWordSuggestions(Language language, String word1) {
+		return pairs.getNextWordSuggestions(language, word1);
+	}
+
+
 	public static void saveWordPairs() {
 		runInThread(() -> pairs.save());
 	}
