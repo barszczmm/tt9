@@ -80,7 +80,10 @@ mono[..., :3] = 255
 mono[..., 3] = (mono_alpha * 255).astype(np.uint8)
 MONO_CROP = Image.fromarray(mono, 'RGBA').crop((x0, y0, x1 + 1, y1 + 1))
 
-bg_hex = '#FF%02X%02X%02X' % tuple(int(round(c)) for c in BG)
+# The background colour of the icons. Independent of the logo background (BG), which is only used
+# for cutting out the hand.
+ICON_BG = (255, 255, 255)
+bg_hex = '#FF%02X%02X%02X' % ICON_BG
 
 
 def place(img, size, content_radius_frac, canvas_bg=None):
@@ -108,7 +111,7 @@ def circle_mask(size, inset=0):
 	return m.resize((size, size), Image.LANCZOS)
 
 
-bg_rgba = tuple(int(round(c)) for c in BG) + (255,)
+bg_rgba = ICON_BG + (255,)
 DENSITIES = {'mdpi': 1, 'hdpi': 1.5, 'xhdpi': 2, 'xxhdpi': 3, 'xxxhdpi': 4}
 
 # --- 4. adaptive icon layers (108dp). The safe zone is a circle of 66dp diameter (radius 33dp).
