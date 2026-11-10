@@ -9,6 +9,7 @@ import io.github.sspanak.tt9.R;
 import io.github.sspanak.tt9.commands.CmdFilterSuggestions;
 import io.github.sspanak.tt9.commands.CmdMoveCursor;
 import io.github.sspanak.tt9.commands.CmdNextInputMode;
+import io.github.sspanak.tt9.commands.CmdSwitchInputMode;
 import io.github.sspanak.tt9.commands.CmdTogglePredictiveMode;
 import io.github.sspanak.tt9.commands.CmdVoiceInput;
 import io.github.sspanak.tt9.commands.Command;
@@ -39,6 +40,12 @@ public class SoftKeyNumberSwipeable extends SoftKeyNumber {
 	public void render() {
 		// the swipe functions may have been changed from the Settings, so we must recheck them
 		updateSwipeable();
+
+		// the icons of some functions depend on the current input mode or language
+		if (isDynamic()) {
+			resetIconCache();
+		}
+
 		super.render();
 	}
 
@@ -81,6 +88,9 @@ public class SoftKeyNumberSwipeable extends SoftKeyNumber {
 		if (cmd instanceof CmdTogglePredictiveMode) {
 			((CmdTogglePredictiveMode) cmd).invalidateIcon(tt9);
 		}
+		if (cmd instanceof CmdSwitchInputMode) {
+			((CmdSwitchInputMode) cmd).invalidateIcon(tt9);
+		}
 
 		return cmd != null ? cmd.getIcon() : super.getCornerIcon(position);
 	}
@@ -93,6 +103,7 @@ public class SoftKeyNumberSwipeable extends SoftKeyNumber {
 		if ((position == ICON_POSITION_BOTTOM_LEFT || position == ICON_POSITION_BOTTOM_RIGHT)
 			&& !(cornerCommand instanceof CmdNextInputMode)
 			&& !(cornerCommand instanceof CmdTogglePredictiveMode)
+			&& !(cornerCommand instanceof CmdSwitchInputMode)
 		) {
 			return super.getCornerElementScale(position) * 0.75f;
 		}
@@ -265,7 +276,8 @@ public class SoftKeyNumberSwipeable extends SoftKeyNumber {
 	public boolean isDynamic() {
 		return
 			getSwipeCommand(false) instanceof CmdNextInputMode || getSwipeCommand(true) instanceof CmdNextInputMode
-			|| getSwipeCommand(false) instanceof CmdTogglePredictiveMode || getSwipeCommand(true) instanceof CmdTogglePredictiveMode;
+			|| getSwipeCommand(false) instanceof CmdTogglePredictiveMode || getSwipeCommand(true) instanceof CmdTogglePredictiveMode
+			|| getSwipeCommand(false) instanceof CmdSwitchInputMode || getSwipeCommand(true) instanceof CmdSwitchInputMode;
 	}
 
 

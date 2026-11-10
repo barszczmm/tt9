@@ -4,8 +4,12 @@ import android.content.Context;
 import android.util.AttributeSet;
 
 import io.github.sspanak.tt9.commands.CmdShift;
+import io.github.sspanak.tt9.commands.CmdSwitchInputMode;
 import io.github.sspanak.tt9.commands.CmdSpaceKorean;
 import io.github.sspanak.tt9.ime.modes.InputMode;
+import io.github.sspanak.tt9.ime.modes.InputModeKind;
+import io.github.sspanak.tt9.ui.StatusIcon;
+import io.github.sspanak.tt9.ui.Vibration;
 import io.github.sspanak.tt9.util.chars.Characters;
 
 public class SoftKeyShift extends BaseSoftKeyWithIcons {
@@ -37,6 +41,54 @@ public class SoftKeyShift extends BaseSoftKeyWithIcons {
 			&& !tt9.isVoiceInputActive()
 			&& !tt9.isInputModeNumeric()
 			&& !tt9.isFnPanelVisible();
+	}
+
+
+	/**
+	 * Holding Shift toggles between 123 and the last used text mode, when enabled in the Settings.
+	 */
+	private boolean isHoldFor123Enabled() {
+		return
+			tt9 != null
+			&& tt9.getSettings().getHoldShiftFor123()
+			&& !tt9.isFnPanelVisible()
+			&& !hasLettersOnAllKeys()
+			&& CmdSwitchInputMode.canToggle123(tt9);
+	}
+
+
+	@Override
+	public boolean isHoldEnabled() {
+		return isHoldFor123Enabled();
+	}
+
+
+	@Override
+	protected void handleHold() {
+		preventRepeat();
+		if (isHoldFor123Enabled() && CmdSwitchInputMode.toggle123(tt9)) {
+			vibrate(Vibration.getHoldVibration());
+		}
+	}
+
+
+	/**
+	 * Indicates the mode that holding the key will switch to.
+	 */
+	@Override
+	protected int getCornerIcon(int position) {
+		if (position != ICON_POSITION_TOP_RIGHT || !isHoldFor123Enabled()) {
+			return super.getCornerIcon(position);
+		}
+
+		final int targetMode = InputModeKind.is123(tt9.getInputMode()) ? CmdSwitchInputMode.getTextModeToRestore(tt9) : InputMode.MODE_123;
+		return StatusIcon.getModeIcon(tt9.getLanguage(), targetMode);
+	}
+
+
+	@Override
+	protected float getCornerElementScale(int position) {
+		return position == ICON_POSITION_TOP_RIGHT ? super.getCornerElementScale(position) * 0.75f : super.getCornerElementScale(position);
 	}
 
 
@@ -88,7 +140,9 @@ public class SoftKeyShift extends BaseSoftKeyWithIcons {
 		}
 
 		resetIconCache();
-		setEnabled(isShiftEnabled() || hasLettersOnAllKeys());
+		// In 123 mode, Shift does nothing when pressed, but it must remain enabled for switching back
+		// to the text modes by holding it.
+		setEnabled(isShiftEnabled() || hasLettersOnAllKeys() || isHoldFor123Enabled());
 		super.render();
 	}
 }
