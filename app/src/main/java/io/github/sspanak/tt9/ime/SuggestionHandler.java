@@ -62,13 +62,19 @@ abstract public class SuggestionHandler extends TypingHandler {
 			lastWord = "";
 		}
 
+		// The last key press is the one that started the next word. Remember it before accepting,
+		// because accepting modifies the digit sequence. If it fails to remove the accepted part,
+		// the first key would still be the one of the accepted word (e.g. 1 for a comma), and
+		// AutoSpace would wrongly decide no space is needed after it.
+		final int nextKey = mInputMode.getLastKey();
+
 		suggestionOps.commitCurrent(false, true);
 		mInputMode.onAcceptSuggestion(lastWord, true);
 		final String[] surroundingText = autoCorrectSpace(
 			lastWord,
 			textField.getSurroundingStringForAutoAssistance(settings, mInputMode),
 			false,
-			mInputMode.getFirstKey()
+			nextKey
 		);
 		mInputMode.determineNextWordTextCase(surroundingText[0], -1);
 		mindReader.setContext(mInputMode, mLanguage, surroundingText, lastWord);
