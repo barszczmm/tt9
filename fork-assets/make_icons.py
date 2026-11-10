@@ -58,6 +58,16 @@ radius = np.sqrt((xs - cx) ** 2 + (ys - cy) ** 2).max()
 print('bbox', x0, y0, x1, y1, 'centre', cx, cy, 'max radius', radius)
 FG_CROP = FG.crop((x0, y0, x1 + 1, y1 + 1))
 
+# Centre the icon horizontally on the four fingers (and the palm below them), not on the whole
+# bounding box, which is shifted to the left by the thumb. Only the fingers reach above the thumb.
+thumb_top = np.nonzero((alpha > 0.5)[:, :int(x0 + (x1 - x0) * 0.25)].any(axis=1))[0].min()
+finger_xs = np.nonzero((alpha[:thumb_top - 20] > 0.5).any(axis=0))[0]
+fx0, fx1 = finger_xs.min(), finger_xs.max()
+# offset of the visual centre from the centre of the cropped image, in source pixels
+CENTRE_OFFSET_X = (fx0 + fx1) / 2 - cx
+new_radius = np.sqrt((xs - (cx + CENTRE_OFFSET_X)) ** 2 + (ys - cy) ** 2).max()
+print('fingers', fx0, fx1, 'centre offset', CENTRE_OFFSET_X, 'max radius from the new centre', new_radius)
+
 # monochrome: the hand silhouette with the letters cut out
 mono_alpha = alpha.copy()
 is_letter = (src.min(axis=2) > 200) & (np.ptp(src, axis=2) < 30)
@@ -71,13 +81,13 @@ bg_hex = '#FF%02X%02X%02X' % tuple(int(round(c)) for c in BG)
 
 
 def place(img, size, content_radius_frac, canvas_bg=None):
-	"""Scale the cropped hand so its farthest pixel is at content_radius_frac * size from the
-	centre, and centre it on a size x size canvas."""
+	"""Scale the cropped hand so that its farthest pixel from the centre of its bounding box would be
+	at content_radius_frac * size, and place it on a size x size canvas, centred on the fingers."""
 	scale = content_radius_frac * size / radius
 	w, h = round(img.width * scale), round(img.height * scale)
 	resized = img.resize((w, h), Image.LANCZOS)
 	canvas = Image.new('RGBA', (size, size), canvas_bg or (0, 0, 0, 0))
-	canvas.alpha_composite(resized, (round(size / 2 - w / 2), round(size / 2 - h / 2)))
+	canvas.alpha_composite(resized, (round(size / 2 - w / 2 - CENTRE_OFFSET_X * scale), round(size / 2 - h / 2)))
 	return canvas
 
 
@@ -186,4 +196,5 @@ dr.ellipse((P / 2 - r, P / 2 - r, P / 2 + r, P / 2 + r), outline=(255, 0, 0, 255
 m = P * 18 / 108
 dr.rectangle((m, m, P - m, P - m), outline=(0, 160, 0, 255), width=2)
 chk.convert('RGB').save(os.path.join(PREVIEW, 'icon-safe-zone.png'))
+print('farthest point of the adaptive icon: %.1fdp from the centre (safe zone: 33dp, visible: 36dp)' % (new_radius / radius * ADAPTIVE_RADIUS * 108))
 print('done')
