@@ -52,6 +52,7 @@ public class SoftKeyNumberSwipeable extends SoftKeyNumber {
 
 			isSwipeable =
 				tt9.getSettings().getSwipeNumberKeysUpDown()
+				|| hasCustomSwipeUpText()
 				|| (number == 0 && tt9.getSettings().getMoveCursorWithSpace())
 				|| (number > 0 && !(NullCommand.ID.equals(tt9.getSettings().getSwipeLeftCommand(actionKey)) && NullCommand.ID.equals(tt9.getSettings().getSwipeRightCommand(actionKey))));
 		}
@@ -157,7 +158,10 @@ public class SoftKeyNumberSwipeable extends SoftKeyNumber {
 			return;
 		}
 
-		if (delta < 0 && isSwipeUpEnabled()) {
+		final String customText = delta < 0 ? getCustomSwipeUpText() : null;
+		if (customText != null && !customText.isEmpty()) {
+			swipeCommandRan = tt9.onText(customText, false);
+		} else if (delta < 0 && isSwipeUpEnabled()) {
 			swipeCommandRan = tt9.onNumberInvertedTextCase(getNumber());
 		} else if (delta > 0 && isSwipeDownEnabled()) {
 			swipeCommandRan = tt9.onNumberDigit(getNumber());
@@ -166,6 +170,37 @@ public class SoftKeyNumberSwipeable extends SoftKeyNumber {
 		if (swipeCommandRan) {
 			lastSwipeCommand = null;
 		}
+	}
+
+
+	/**
+	 * Keys that allow typing a user-defined text when swiped up, return it here. When it is null or
+	 * empty, swiping up falls back to the default function.
+	 */
+	@Nullable
+	protected String getCustomSwipeUpText() {
+		return null;
+	}
+
+
+	private boolean hasCustomSwipeUpText() {
+		final String text = getCustomSwipeUpText();
+		return text != null && !text.isEmpty();
+	}
+
+
+	/**
+	 * Custom texts are allowed only when typing regular text, not in numeric fields, nor when
+	 * a special panel, such as the clipboard tools, is active.
+	 */
+	protected boolean isCustomTextAllowed() {
+		return
+			tt9 != null
+			&& !isFnPanelOn()
+			&& !tt9.isInputModeNumeric()
+			&& !tt9.isInputTypePhone()
+			&& !tt9.isVoiceInputActive()
+			&& !tt9.isTextEditingActive();
 	}
 
 

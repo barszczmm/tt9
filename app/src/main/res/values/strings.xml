@@ -146,6 +146,9 @@
 	<string name="pref_category_number_key_swipes">Number Keys</string>
 	<string name="pref_number_key_swipes_summary">Select what happens when you swipe left or right on the 1–9 keys. The selected functions are indicated by icons in the bottom corners of the keys.</string>
 	<string name="pref_number_key_swipes_category">Key %1$s</string>
+	<string name="pref_number_key_swipe_up_text">Swipe Up: Text to Type</string>
+	<string name="pref_number_key_swipe_up_text_summary">Type any text, such as a punctuation mark, a word, or an email address, when swiping up. Leave empty to keep the default function.</string>
+	<string name="pref_number_key_swipe_up_label">Swipe Up: Short Label</string>
 	<string name="pref_reset_swipe_commands">Restore Default Functions</string>
 	<string name="pref_key_function_none">None</string>
 	<string name="pref_press">Press</string>
