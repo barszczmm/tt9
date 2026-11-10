@@ -37,6 +37,7 @@ import io.github.sspanak.tt9.preferences.screens.modePredictive.ModePredictiveSc
 import io.github.sspanak.tt9.preferences.screens.setup.SetupScreen;
 import io.github.sspanak.tt9.ui.PremiumPreferencesActivity;
 import io.github.sspanak.tt9.util.Logger;
+import io.github.sspanak.tt9.util.sys.Permissions;
 import io.github.sspanak.tt9.util.sys.SystemSettings;
 
 public class PreferencesActivity extends PremiumPreferencesActivity implements PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
@@ -51,6 +52,19 @@ public class PreferencesActivity extends PremiumPreferencesActivity implements P
 
 		buildLayout();
 		displayScreen(getPreviousScreen(savedInstanceState), false);
+		requestNotificationsPermission();
+	}
+
+
+	/**
+	 * On Android 13+, apps must ask for permission to post notifications. Without it, Android also
+	 * hides all toasts from the keyboard, so for example, adding a word would give no feedback.
+	 */
+	private void requestNotificationsPermission() {
+		Permissions permissions = new Permissions(this);
+		if (permissions.noPostNotifications()) {
+			permissions.requestPostNotifications();
+		}
 	}
 
 
