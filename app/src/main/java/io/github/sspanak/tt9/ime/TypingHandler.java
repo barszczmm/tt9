@@ -19,6 +19,7 @@ import io.github.sspanak.tt9.hacks.InputType;
 import io.github.sspanak.tt9.ime.helpers.CursorOps;
 import io.github.sspanak.tt9.ime.helpers.InputConnectionAsync;
 import io.github.sspanak.tt9.ime.helpers.InputModeValidator;
+import io.github.sspanak.tt9.ime.helpers.Key;
 import io.github.sspanak.tt9.ime.helpers.SuggestionOps;
 import io.github.sspanak.tt9.ime.helpers.TextField;
 import io.github.sspanak.tt9.ime.helpers.TextSelection;
@@ -46,6 +47,8 @@ public abstract class TypingHandler extends KeyPadHandler {
 	@Nullable private Handler shiftStateDebounceHandler;
 
 	// input
+	protected boolean forceNumberHoldToType = false;
+	private boolean invertNextNumberTextCase = false;
 	@NonNull protected ArrayList<Integer> allowedInputModes = new ArrayList<>();
 	@NonNull protected InputMode mInputMode = InputMode.getInstance(null, null, null, null, InputMode.MODE_PASSTHROUGH);
 
@@ -215,7 +218,7 @@ public abstract class TypingHandler extends KeyPadHandler {
 	protected boolean onNumber(int key, boolean hold, int repeat) {
 		suggestionOps.cancelDelayedAccept();
 
-		hold = hold && settings.getHoldToType();
+		hold = hold && (settings.getHoldToType() || forceNumberHoldToType);
 		String[] surroundingChars = textField.getSurroundingStringForAutoAssistance(settings, mInputMode);
 		String lastWord = null;
 
@@ -237,6 +240,8 @@ public abstract class TypingHandler extends KeyPadHandler {
 		// Auto-adjust the text case before each word/char, if the InputMode supports it.
 		mInputMode.determineNextWordTextCase(surroundingChars[0], key);
 
+		mInputMode.setInvertNextKeyTextCase(invertNextNumberTextCase && !hold);
+		invertNextNumberTextCase = false;
 		if (!mInputMode.onNumber(key, hold, repeat, surroundingChars)) {
 			forceShowWindow();
 			return false;
@@ -253,6 +258,43 @@ public abstract class TypingHandler extends KeyPadHandler {
 		}
 
 		return true;
+	}
+
+
+	/**
+	 * Types the digit of the given number key, just like holding the key would do, but regardless of
+	 * the "hold to type" setting and of any hotkeys assigned to holding the key. Used for swiping
+	 * down on the virtual number keys.
+	 */
+	public boolean onNumberDigit(int key) {
+		resetKeyRepeat();
+		forceNumberHoldToType = true;
+		try {
+			return onNumber(key, true, 0);
+		} finally {
+			forceNumberHoldToType = false;
+		}
+	}
+
+
+	/**
+	 * Presses the given number key, but types the character (or the word, depending on the input
+	 * mode) in the opposite text case. Used for swiping up on the virtual number keys. If the current
+	 * input mode does not support it, this is the same as a regular key press.
+	 */
+	public boolean onNumberInvertedTextCase(int key) {
+		final int keyCode = Key.numberToCode(settings, key);
+		if (keyCode < 0) {
+			return false;
+		}
+
+		invertNextNumberTextCase = true;
+		try {
+			onKeyDown(keyCode, new KeyEvent(KeyEvent.ACTION_DOWN, keyCode));
+			return onKeyUp(keyCode, new KeyEvent(KeyEvent.ACTION_UP, keyCode));
+		} finally {
+			invertNextNumberTextCase = false;
+		}
 	}
 
 

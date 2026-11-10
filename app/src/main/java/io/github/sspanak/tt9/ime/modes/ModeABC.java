@@ -24,6 +24,7 @@ class ModeABC extends InputMode {
 	private final ArrayList<ArrayList<String>> KEY_CHARACTERS = new ArrayList<>();
 
 	private boolean shouldSelectNextLetter = false;
+	private boolean isLetterTextCaseInverted = false;
 
 	// text analysis
 	@NonNull private final AutoSpace autoSpace;
@@ -78,6 +79,7 @@ class ModeABC extends InputMode {
 	private boolean onNumber(int number, boolean hold, int repeat) {
 		if (hold) {
 			reset();
+			isLetterTextCaseInverted = false;
 			autoAcceptTimeout = 0;
 			digitSequence = String.valueOf(number);
 			shouldSelectNextLetter = false;
@@ -99,6 +101,9 @@ class ModeABC extends InputMode {
 			shouldSelectNextLetter = true;
 		} else {
 			reset();
+			// When cycling through the letters of the same key, preserve the text case chosen with the
+			// first press. Only a new letter can have its text case inverted.
+			isLetterTextCaseInverted = invertNextKeyTextCase;
 			autoAcceptTimeout = settings.getAutoAcceptTimeoutAbc();
 			digitSequence = String.valueOf(number);
 			shouldSelectNextLetter = false;
@@ -115,6 +120,10 @@ class ModeABC extends InputMode {
 	/******** TEXT CASE ********/
 	@Override
 	protected String adjustSuggestionTextCase(String word, int newTextCase) {
+		if (isLetterTextCaseInverted) {
+			newTextCase = newTextCase == CASE_LOWER ? CASE_UPPER : CASE_LOWER;
+		}
+
 		if (language.hasUpperCase()) {
 			return newTextCase == CASE_LOWER ? word.toLowerCase(language.getLocale()) : word.toUpperCase(language.getLocale());
 		} else {
@@ -253,6 +262,7 @@ class ModeABC extends InputMode {
 	public void reset() {
 		super.reset();
 		digitSequence = "";
+		isLetterTextCaseInverted = false;
 		shouldSelectNextLetter = false;
 	}
 

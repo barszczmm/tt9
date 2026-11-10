@@ -38,6 +38,10 @@ class ModeWords extends ModeCheonjiin {
 	private boolean isCursorDirectionForward = false;
 	private boolean isRecomposing = false;
 	private int textFieldTextCase;
+	// Not initialized with CASE_UNDEFINED, because reset() may be called by the parent constructor,
+	// before the field initializers of this class run. A boolean flag is always safe.
+	private boolean isTextCaseInverted;
+	private int textCaseBeforeInversion;
 
 
 	protected ModeWords(SettingsStore settings, Language lang, InputType inputType, TextField textField) {
@@ -93,7 +97,36 @@ class ModeWords extends ModeCheonjiin {
 	@Override
 	public boolean onNumber(int number, boolean hold, int repeat, @NonNull String[] surroundingChars) {
 		isCursorDirectionForward = true;
-		return super.onNumber(number, hold, repeat, surroundingChars);
+		final boolean result = super.onNumber(number, hold, repeat, surroundingChars);
+
+		if (invertNextKeyTextCase && !hold) {
+			invertCurrentWordTextCase();
+		}
+
+		return result;
+	}
+
+
+	/**
+	 * Words do not have a text case for each letter, so we toggle the case of the entire current word:
+	 * lowercase becomes capitalized, while capitalized or uppercase become lowercase. Once the word
+	 * is accepted, the previous text case is restored.
+	 */
+	private void invertCurrentWordTextCase() {
+		if (!isTextCaseInverted) {
+			isTextCaseInverted = true;
+			textCaseBeforeInversion = textCase;
+		}
+
+		textCase = getTextCase() == CASE_LOWER ? CASE_CAPITALIZE : CASE_LOWER;
+	}
+
+
+	private void restoreTextCaseBeforeInversion() {
+		if (isTextCaseInverted) {
+			isTextCaseInverted = false;
+			textCase = textCaseBeforeInversion;
+		}
 	}
 
 
@@ -203,6 +236,7 @@ class ModeWords extends ModeCheonjiin {
 	@Override
 	public void reset() {
 		basicReset();
+		restoreTextCaseBeforeInversion();
 		containsEmojis = false;
 		digitSequence = "";
 		disablePredictions = false;
@@ -452,6 +486,9 @@ class ModeWords extends ModeCheonjiin {
 		if (!language.hasUpperCase()) {
 			return false;
 		}
+
+		// the user has explicitly chosen a new text case, so it must be preserved after this word
+		isTextCaseInverted = false;
 
 		boolean isTyping = currentWord != null && !currentWord.isEmpty();
 		boolean isTyingSpecialChar = isTyping && currentWord.length() == 1 && !Character.isAlphabetic(currentWord.charAt(0));

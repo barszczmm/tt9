@@ -266,6 +266,10 @@ The on-screen keypad works the same way as a physical phone keypad. Keys with a 
 #### 0-9 Keys
 Number keys are used for typing words and entering digits. The Retro layout also allows for swipe left and swipe right gestures on some keys. When available, these functions are indicated by icons in the bottom-left or bottom-right corner of the key.
 
+Number keys also support vertical swipes, unless disabled from Settings → Keypad → Swipe Number Keys Up and Down:
+- **Swipe up:** Type the letter in the opposite case, for example, "A" instead of "a", or "a" when Caps Lock is on. In Predictive mode, words do not have a separate case for each letter, so swiping up toggles the case of the entire current word between lowercase and capitalized.
+- **Swipe down:** Type the digit of the key, regardless of whether "Number Key Holding" is enabled, or whether holding the key runs a function.
+
 If you have Premium, the swipe gestures can be customized or disabled both for the Retro and the Modern layout. You can do this from Settings → Keypad → Key Functions.
 
 #### Custom Text Keys ("!" and "?")

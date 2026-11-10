@@ -37,7 +37,8 @@ public class SoftKeyNumberSwipeable extends SoftKeyNumber {
 			final String actionKey = ActionKey.numberToActionKey(number);
 
 			isSwipeable =
-				(number == 0 && tt9.getSettings().getMoveCursorWithSpace())
+				tt9.getSettings().getSwipeNumberKeysUpDown()
+				|| (number == 0 && tt9.getSettings().getMoveCursorWithSpace())
 				|| (getNumber() > 0 && !(tt9.getSettings().getSwipeLeftCommand(actionKey).isEmpty() && tt9.getSettings().getSwipeRightCommand(actionKey).isEmpty()));
 		}
 	}
@@ -132,6 +133,54 @@ public class SoftKeyNumberSwipeable extends SoftKeyNumber {
 	}
 
 
+	/**
+	 * Swiping up types the key letter in the opposite text case. Swiping down types the key digit.
+	 * When neither is possible, the key behaves as if it was pressed normally.
+	 */
+	@Override
+	protected void handleEndSwipeY(float position, float delta) {
+		if (tt9 == null) {
+			return;
+		}
+
+		if (delta < 0 && isSwipeUpEnabled()) {
+			swipeCommandRan = tt9.onNumberInvertedTextCase(getNumber());
+		} else if (delta > 0 && isSwipeDownEnabled()) {
+			swipeCommandRan = tt9.onNumberDigit(getNumber());
+		}
+
+		if (swipeCommandRan) {
+			lastSwipeCommand = null;
+		}
+	}
+
+
+	private boolean isSwipeYEnabled() {
+		return
+			tt9 != null
+			&& isSwipeable
+			&& tt9.getSettings().getSwipeNumberKeysUpDown()
+			&& !isFnPanelOn()
+			&& !tt9.isInputModeNumeric()
+			&& !tt9.isVoiceInputActive()
+			&& !tt9.isTextEditingActive();
+	}
+
+
+	private boolean isSwipeUpEnabled() {
+		return
+			isSwipeYEnabled()
+			&& tt9.getLanguage() != null
+			&& tt9.getLanguage().hasUpperCase()
+			&& (getNumber() >= 2 || hasLettersOnAllKeys());
+	}
+
+
+	private boolean isSwipeDownEnabled() {
+		return isSwipeYEnabled();
+	}
+
+
 	@Override
 	protected boolean handleRelease() {
 		if (!swipeCommandRan) {
@@ -177,6 +226,7 @@ public class SoftKeyNumberSwipeable extends SoftKeyNumber {
 		return
 			isSwipeable
 			&& getNumber() == 0
+			&& tt9 != null && tt9.getSettings().getMoveCursorWithSpace()
 			&& !LanguageKind.isKorean(tt9 != null ? tt9.getLanguage() : null)
 			&& (!fnPanelOn || (tt9 != null && tt9.isTextEditingActive()));
 	}

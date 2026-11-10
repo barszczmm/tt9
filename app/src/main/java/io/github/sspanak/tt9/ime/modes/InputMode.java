@@ -37,6 +37,7 @@ abstract public class InputMode {
 	public static final int CASE_DICTIONARY = 3; // do not force it, but use the dictionary word as-is
 	protected final ArrayList<Integer> allowedTextCases = new ArrayList<>();
 	protected int textCase = CASE_LOWER;
+	protected boolean invertNextKeyTextCase = false;
 
 	// data
 	protected int autoAcceptTimeout = -1;
@@ -248,6 +249,15 @@ abstract public class InputMode {
 
 	public void determineNextWordTextCase(@Nullable String beforeCursor, int nextDigit) {}
 	public void skipNextTextCaseDetection() {}
+
+	/**
+	 * Requests the next onNumber() call to produce the opposite text case of what would normally be
+	 * typed. It is up to each mode to decide what that means, or ignore it completely. Must be called
+	 * before every onNumber(), because it applies only to the next key press.
+	 */
+	public void setInvertNextKeyTextCase(boolean invert) {
+		invertNextKeyTextCase = invert && language.hasUpperCase();
+	}
 
 	// Based on the internal logic of the mode (punctuation or grammar rules), re-adjust the text case for when getSuggestions() is called.
 	protected String adjustSuggestionTextCase(String word, int newTextCase) { return word; }

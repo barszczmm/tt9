@@ -110,6 +110,10 @@ public class SettingsUI extends SettingsTyping {
 		return folded == null ? isFolded : folded;
 	}
 
+	public boolean getSwipeNumberKeysUpDown() {
+		return prefs.getBoolean("pref_swipe_number_keys_up_down", true);
+	}
+
 	public boolean getHapticFeedback() {
 		return prefs.getBoolean(SwitchHapticFeedback.NAME, SwitchHapticFeedback.DEFAULT);
 	}
