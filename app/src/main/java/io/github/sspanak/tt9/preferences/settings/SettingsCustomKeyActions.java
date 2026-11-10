@@ -86,7 +86,7 @@ public class SettingsCustomKeyActions extends SettingsUI {
 	/******** INPUT MODE SWITCHING ********/
 
 	public static final String PREF_INPUT_MODE_KEY_SKIP_123 = "pref_input_mode_key_skip_123";
-	public static final String PREF_HOLD_SHIFT_FOR_123 = "pref_hold_shift_for_123";
+	public static final String PREF_SHIFT_KEY_SWIPES = "pref_shift_key_swipes";
 
 	/**
 	 * When enabled, pressing the on-screen input mode key switches only between the text modes
@@ -97,8 +97,12 @@ public class SettingsCustomKeyActions extends SettingsUI {
 	}
 
 
-	public boolean getHoldShiftFor123() {
-		return prefs.getBoolean(PREF_HOLD_SHIFT_FOR_123, true);
+	/**
+	 * When enabled, swiping down on the on-screen Shift key toggles 123 mode, and swiping up toggles
+	 * the text editing palette (Clipboard Tools).
+	 */
+	public boolean getShiftKeySwipes() {
+		return prefs.getBoolean(PREF_SHIFT_KEY_SWIPES, true);
 	}
 
 

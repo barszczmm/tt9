@@ -3,18 +3,19 @@ package io.github.sspanak.tt9.ui.main.keys;
 import android.content.Context;
 import android.util.AttributeSet;
 
+import io.github.sspanak.tt9.commands.CmdEditText;
 import io.github.sspanak.tt9.commands.CmdShift;
-import io.github.sspanak.tt9.commands.CmdSwitchInputMode;
 import io.github.sspanak.tt9.commands.CmdSpaceKorean;
+import io.github.sspanak.tt9.commands.CmdSwitchInputMode;
 import io.github.sspanak.tt9.ime.modes.InputMode;
 import io.github.sspanak.tt9.ime.modes.InputModeKind;
 import io.github.sspanak.tt9.ui.StatusIcon;
-import io.github.sspanak.tt9.ui.Vibration;
 import io.github.sspanak.tt9.util.chars.Characters;
 
-public class SoftKeyShift extends BaseSoftKeyWithIcons {
+public class SoftKeyShift extends BaseSwipeableKey {
 	private final CmdShift shift = new CmdShift();
 	private final CmdSpaceKorean space = new CmdSpaceKorean();
+	private final CmdEditText editText = new CmdEditText();
 
 	public SoftKeyShift(Context context) {
 		super(context);
@@ -44,51 +45,33 @@ public class SoftKeyShift extends BaseSoftKeyWithIcons {
 	}
 
 
-	/**
-	 * Holding Shift toggles between 123 and the last used text mode, when enabled in the Settings.
-	 */
-	private boolean isHoldFor123Enabled() {
+	private boolean areSwipesEnabled() {
 		return
 			tt9 != null
-			&& tt9.getSettings().getHoldShiftFor123()
-			&& !tt9.isFnPanelVisible()
+			&& tt9.getSettings().getShiftKeySwipes()
 			&& !hasLettersOnAllKeys()
+			&& !tt9.isVoiceInputActive();
+	}
+
+
+	/**
+	 * Swiping down toggles between 123 and the last used text mode.
+	 */
+	private boolean isSwipeDownEnabled() {
+		return
+			areSwipesEnabled()
+			&& !tt9.isFnPanelVisible()
 			&& CmdSwitchInputMode.canToggle123(tt9);
 	}
 
 
-	@Override
-	public boolean isHoldEnabled() {
-		return isHoldFor123Enabled();
-	}
-
-
-	@Override
-	protected void handleHold() {
-		preventRepeat();
-		if (isHoldFor123Enabled() && CmdSwitchInputMode.toggle123(tt9)) {
-			vibrate(Vibration.getHoldVibration());
-		}
-	}
-
-
 	/**
-	 * Indicates the mode that holding the key will switch to.
+	 * Swiping up shows or hides the text editing palette (Clipboard Tools).
 	 */
-	@Override
-	protected int getCornerIcon(int position) {
-		if (position != ICON_POSITION_TOP_RIGHT || !isHoldFor123Enabled()) {
-			return super.getCornerIcon(position);
-		}
-
-		final int targetMode = InputModeKind.is123(tt9.getInputMode()) ? CmdSwitchInputMode.getTextModeToRestore(tt9) : InputMode.MODE_123;
-		return StatusIcon.getModeIcon(tt9.getLanguage(), targetMode);
-	}
-
-
-	@Override
-	protected float getCornerElementScale(int position) {
-		return position == ICON_POSITION_TOP_RIGHT ? super.getCornerElementScale(position) * 0.75f : super.getCornerElementScale(position);
+	private boolean isSwipeUpEnabled() {
+		return
+			areSwipesEnabled()
+			&& (tt9.isTextEditingActive() || (!tt9.isFnPanelVisible() && editText.isAvailable(tt9)));
 	}
 
 
@@ -127,8 +110,62 @@ public class SoftKeyShift extends BaseSoftKeyWithIcons {
 	}
 
 
+	/**
+	 * Indicates the swipe functions: Clipboard Tools at the top (swipe up), and the mode that swiping
+	 * down will switch to at the bottom.
+	 */
+	@Override
+	protected int getCornerIcon(int position) {
+		if (position == ICON_POSITION_TOP_LEFT && isSwipeUpEnabled()) {
+			return editText.getIcon();
+		}
+
+		if (position == ICON_POSITION_BOTTOM_LEFT && isSwipeDownEnabled()) {
+			final int targetMode = InputModeKind.is123(tt9.getInputMode()) ? CmdSwitchInputMode.getTextModeToRestore(tt9) : InputMode.MODE_123;
+			return StatusIcon.getModeIcon(tt9.getLanguage(), targetMode);
+		}
+
+		return super.getCornerIcon(position);
+	}
+
+
+	@Override
+	protected float getCornerElementScale(int position) {
+		return super.getCornerElementScale(position) * 0.75f;
+	}
+
+
+	@Override
+	public boolean isHoldEnabled() {
+		return false;
+	}
+
+
+	/**
+	 * Holding the key does nothing. Prevent the repeated calls and the press action on release.
+	 */
+	@Override
+	protected void handleHold() {
+		preventRepeat();
+	}
+
+
+	@Override
+	protected void handleEndSwipeY(float position, float delta) {
+		if (delta > 0 && isSwipeDownEnabled()) {
+			CmdSwitchInputMode.toggle123(tt9);
+		} else if (delta < 0 && isSwipeUpEnabled()) {
+			editText.run(tt9);
+		}
+	}
+
+
 	@Override
 	protected boolean handleRelease() {
+		if (isSwipeable && !notSwiped()) {
+			return true;
+		}
+
 		return hasLettersOnAllKeys() ? space.run(tt9) : shift.run(tt9);
 	}
 
@@ -139,10 +176,12 @@ public class SoftKeyShift extends BaseSoftKeyWithIcons {
 			return;
 		}
 
+		isSwipeable = areSwipesEnabled();
 		resetIconCache();
-		// In 123 mode, Shift does nothing when pressed, but it must remain enabled for switching back
-		// to the text modes by holding it.
-		setEnabled(isShiftEnabled() || hasLettersOnAllKeys() || isHoldFor123Enabled());
+
+		// In 123 mode and in text editing mode, Shift does nothing when pressed, but it must remain
+		// enabled for swiping.
+		setEnabled(isShiftEnabled() || hasLettersOnAllKeys() || isSwipeDownEnabled() || isSwipeUpEnabled());
 		super.render();
 	}
 }

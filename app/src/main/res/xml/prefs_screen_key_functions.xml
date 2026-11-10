@@ -12,9 +12,9 @@
 
 		<SwitchPreferenceCompat
 			android:defaultValue="true"
-			android:key="pref_hold_shift_for_123"
-			android:summary="@string/pref_hold_shift_for_123_summary"
-			android:title="@string/pref_hold_shift_for_123" />
+			android:key="pref_shift_key_swipes"
+			android:summary="@string/pref_shift_key_swipes_summary"
+			android:title="@string/pref_shift_key_swipes" />
 
 		<io.github.sspanak.tt9.preferences.custom.PreferencePlainText
 			android:key="pref_input_mode_swipes_info"

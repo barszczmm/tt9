@@ -143,8 +143,8 @@
 	<string name="pref_category_input_modes">Input Modes</string>
 	<string name="pref_input_mode_key_skip_123">Input Mode Key Skips 123</string>
 	<string name="pref_input_mode_key_skip_123_summary">Pressing the on-screen input mode key switches only between Predictive and ABC. In 123 mode, it returns to the last used one.</string>
-	<string name="pref_hold_shift_for_123">Hold Shift for 123 Mode</string>
-	<string name="pref_hold_shift_for_123_summary">Hold the on-screen Shift key to switch to 123 mode, and hold it again to return to Predictive or ABC.</string>
+	<string name="pref_shift_key_swipes">Swipe the Shift Key</string>
+	<string name="pref_shift_key_swipes_summary">Swipe the on-screen Shift key down to switch to 123 mode and back to Predictive or ABC. Swipe it up to show or hide the Clipboard Tools.</string>
 	<string name="pref_input_mode_swipes_summary">You can also assign \"Switch to 123 Mode\", \"Switch to ABC Mode\", or \"Switch to Predictive Mode\" to a swipe on the number keys below.</string>
 	<string name="pref_category_space_key">Space Key</string>
 	<string name="pref_move_cursor_with_space">Swipe to Move the Cursor</string>
