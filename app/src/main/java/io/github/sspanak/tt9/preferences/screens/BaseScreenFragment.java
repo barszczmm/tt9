@@ -1,10 +1,14 @@
 package io.github.sspanak.tt9.preferences.screens;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceGroup;
 
 import io.github.sspanak.tt9.languages.LanguageCollection;
 import io.github.sspanak.tt9.preferences.PreferencesActivity;
@@ -52,6 +56,7 @@ abstract public class BaseScreenFragment extends PreferenceFragmentCompat {
 	public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
 		LanguageCollection.init(getContext());
 		setPreferencesFromResource(getXml(), rootKey);
+		fixIntentPackages(getPreferenceScreen());
 
 		if (activity == null) {
 			activity = (PreferencesActivity) getActivity();
@@ -66,6 +71,31 @@ abstract public class BaseScreenFragment extends PreferenceFragmentCompat {
 		}
 
 		onCreate();
+	}
+
+
+	/**
+	 * The preference XML files contain intents with a hardcoded "targetPackage". When the app is built
+	 * with a different application ID (e.g. to be installed alongside the original), they would open
+	 * the activities of the other app, or nothing at all. So, we point them to the current package.
+	 */
+	private void fixIntentPackages(@Nullable PreferenceGroup group) {
+		final Context context = getContext();
+		if (group == null || context == null) {
+			return;
+		}
+
+		for (int i = 0; i < group.getPreferenceCount(); i++) {
+			final Preference pref = group.getPreference(i);
+			final Intent intent = pref.getIntent();
+			if (intent != null && intent.getComponent() != null) {
+				intent.setClassName(context.getPackageName(), intent.getComponent().getClassName());
+			}
+
+			if (pref instanceof PreferenceGroup) {
+				fixIntentPackages((PreferenceGroup) pref);
+			}
+		}
 	}
 
 
