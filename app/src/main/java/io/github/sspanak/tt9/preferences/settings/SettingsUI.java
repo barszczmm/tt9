@@ -110,6 +110,10 @@ public class SettingsUI extends SettingsTyping {
 		return folded == null ? isFolded : folded;
 	}
 
+	public boolean getSimpleSpaceKey() {
+		return prefs.getBoolean("pref_simple_space_key", true);
+	}
+
 	public boolean getHapticFeedback() {
 		return prefs.getBoolean(SwitchHapticFeedback.NAME, SwitchHapticFeedback.DEFAULT);
 	}
