@@ -301,7 +301,12 @@ _In Modern layout, it is the bottom-left key._
 
 #### Shift Key
 - **Press:** Change the text case.
-- **Hold:** Switch to 123 mode. When in 123 mode, return to the last used text mode (Predictive or ABC). The icon in the top-right corner shows the mode that holding the key will switch to. You can turn this off from Settings → Keypad → Key Functions → Hold Shift for 123 Mode.
+- **Swipe down:** Switch to 123 mode. When in 123 mode, return to the last used text mode (Predictive or ABC). The icon in the bottom-left corner shows the mode that swiping down will switch to.
+- **Swipe up:** Show or hide the Clipboard Tools (copy, paste, text selection, etc.). The function is indicated by the icon in the top-left corner.
+
+Holding the key does nothing. You can turn off the swipe functions from Settings → Keypad → Key Functions → Swipe the Shift Key.
+
+_In the Retro layout, the Shift key is hidden while the Clipboard Tools are open, so swiping up can only open them. Close them the usual way._
 
 #### Backspace
 Deletes characters when pressed. When Settings → Keypad → Fast Delete is enabled, you can swipe back to delete the previous word.
