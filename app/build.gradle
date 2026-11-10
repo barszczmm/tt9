@@ -175,12 +175,29 @@ android {
 		vectorDrawables.generatedDensities = []
 	}
 
+	// Optional release signing. When the environment variables below are set (e.g. by the GitHub
+	// "Build APK" workflow), the release APKs are signed with that key. Otherwise, they remain unsigned.
+	def releaseKeystore = System.getenv('TT9_KEYSTORE_FILE')
+	signingConfigs {
+		release {
+			if (releaseKeystore) {
+				storeFile = file(releaseKeystore)
+				storePassword = System.getenv('TT9_KEYSTORE_PASSWORD')
+				keyAlias = System.getenv('TT9_KEY_ALIAS')
+				keyPassword = System.getenv('TT9_KEY_PASSWORD')
+			}
+		}
+	}
+
 	buildTypes {
 		debug {
 			buildConfigField 'String', 'VERSION_FULL', "\"${getVersionString('debug')}\""
 		}
 		release {
 			buildConfigField 'String', 'VERSION_FULL', "\"${getVersionString('release')}\""
+			if (releaseKeystore) {
+				signingConfig = signingConfigs.release
+			}
 
 			debuggable = false
 			jniDebuggable = false
