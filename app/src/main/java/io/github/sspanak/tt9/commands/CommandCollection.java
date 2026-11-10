@@ -135,6 +135,9 @@ public class CommandCollection {
 			swipe.add(new CmdTxtCut());
 			swipe.add(new CmdTxtCopy());
 			swipe.add(new CmdTxtPaste());
+			swipe.add(new CmdSwitchTo123());
+			swipe.add(new CmdSwitchToABC());
+			swipe.add(new CmdSwitchToPredictive());
 		}
 
 		return swipe;

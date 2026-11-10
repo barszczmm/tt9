@@ -70,7 +70,7 @@ public class SoftKeyLF4 extends BaseSwipeableKey {
 
 	@Override
 	protected boolean handleRelease() {
-		return notSwiped() && new CmdNextInputMode().run(tt9);
+		return notSwiped() && new CmdNextInputMode().run(tt9, tt9 != null && tt9.getSettings().getInputModeKeySkip123());
 	}
 
 	@Override

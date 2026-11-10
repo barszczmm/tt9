@@ -139,7 +139,13 @@
 	<string name="pref_simple_space_key">Simple Space Key</string>
 	<string name="pref_simple_space_key_summary">Tapping the on-screen space key types only a space. Hold it to choose a new line or a special character.</string>
 	<string name="pref_category_key_functions">Key Functions</string>
-	<string name="pref_category_key_functions_summary">Swipe functions of the number keys, the Space key, and the \"!\" and \"?\" keys.</string>
+	<string name="pref_category_key_functions_summary">Input mode switching, and swipe functions of the number keys, the Space key, and the \"!\" and \"?\" keys.</string>
+	<string name="pref_category_input_modes">Input Modes</string>
+	<string name="pref_input_mode_key_skip_123">Input Mode Key Skips 123</string>
+	<string name="pref_input_mode_key_skip_123_summary">Pressing the on-screen input mode key switches only between Predictive and ABC. In 123 mode, it returns to the last used one.</string>
+	<string name="pref_hold_shift_for_123">Hold Shift for 123 Mode</string>
+	<string name="pref_hold_shift_for_123_summary">Hold the on-screen Shift key to switch to 123 mode, and hold it again to return to Predictive or ABC.</string>
+	<string name="pref_input_mode_swipes_summary">You can also assign \"Switch to 123 Mode\", \"Switch to ABC Mode\", or \"Switch to Predictive Mode\" to a swipe on the number keys below.</string>
 	<string name="pref_category_space_key">Space Key</string>
 	<string name="pref_move_cursor_with_space">Swipe to Move the Cursor</string>
 	<string name="pref_move_cursor_with_space_summary">Swipe left or right on the Space key to move the text cursor.</string>
@@ -296,6 +302,9 @@
 	<string name="function_select_keyboard">Select Keyboard</string>
 	<string name="function_show_emojis">Show Emojis</string>
 	<string name="function_show_settings">Show Settings</string>
+	<string name="function_switch_to_123">Switch to 123 Mode</string>
+	<string name="function_switch_to_abc">Switch to ABC Mode</string>
+	<string name="function_switch_to_predictive">Switch to Predictive Mode</string>
 	<string name="function_toggle_predictive_mode">Toggle predictive mode</string>
 	<string name="function_txt_select_all">Select all</string>
 	<string name="function_txt_select_previous_char">Select previous character</string>

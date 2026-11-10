@@ -90,4 +90,40 @@ public class StatusIcon {
 
 		return resId != null ? resId : defaultValue;
 	}
+
+
+	/**
+	 * Used only for filling in the icon cache, without changing the cached status icon.
+	 */
+	private StatusIcon() {
+		resourceId = 0;
+		generateIconsCache();
+	}
+
+
+	/**
+	 * Returns the icon of the given input mode in the given language, in lowercase, without changing
+	 * the current status icon. Useful for displaying the mode icon on keys.
+	 */
+	public static int getModeIcon(@Nullable Language language, int modeId) {
+		if (modeId == InputMode.MODE_123) {
+			return R.drawable.ic_lang_123;
+		}
+
+		if (language == null) {
+			return R.drawable.ic_keyboard;
+		}
+
+		if (ICONS.isEmpty()) {
+			new StatusIcon();
+		}
+
+		final String name = modeId == InputMode.MODE_ABC ? language.getIconABC() : language.getIconT9();
+		Integer resId = ICONS.get(name + "_lo");
+		if (resId == null) {
+			resId = ICONS.get(name);
+		}
+
+		return resId != null ? resId : R.drawable.ic_keyboard;
+	}
 }

@@ -3,6 +3,24 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:orderingFromXml="true">
 
+	<PreferenceCategory android:title="@string/pref_category_input_modes">
+		<SwitchPreferenceCompat
+			android:defaultValue="true"
+			android:key="pref_input_mode_key_skip_123"
+			android:summary="@string/pref_input_mode_key_skip_123_summary"
+			android:title="@string/pref_input_mode_key_skip_123" />
+
+		<SwitchPreferenceCompat
+			android:defaultValue="true"
+			android:key="pref_hold_shift_for_123"
+			android:summary="@string/pref_hold_shift_for_123_summary"
+			android:title="@string/pref_hold_shift_for_123" />
+
+		<io.github.sspanak.tt9.preferences.custom.PreferencePlainText
+			android:key="pref_input_mode_swipes_info"
+			android:summary="@string/pref_input_mode_swipes_summary" />
+	</PreferenceCategory>
+
 	<PreferenceCategory android:title="@string/pref_category_space_key">
 		<SwitchPreferenceCompat
 			android:defaultValue="true"

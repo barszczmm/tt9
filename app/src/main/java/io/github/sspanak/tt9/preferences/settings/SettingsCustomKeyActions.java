@@ -83,6 +83,25 @@ public class SettingsCustomKeyActions extends SettingsUI {
 	}
 
 
+	/******** INPUT MODE SWITCHING ********/
+
+	public static final String PREF_INPUT_MODE_KEY_SKIP_123 = "pref_input_mode_key_skip_123";
+	public static final String PREF_HOLD_SHIFT_FOR_123 = "pref_hold_shift_for_123";
+
+	/**
+	 * When enabled, pressing the on-screen input mode key switches only between the text modes
+	 * (Predictive and ABC). The 123 mode is accessed using the Shift key or a swipe function.
+	 */
+	public boolean getInputModeKeySkip123() {
+		return prefs.getBoolean(PREF_INPUT_MODE_KEY_SKIP_123, true);
+	}
+
+
+	public boolean getHoldShiftFor123() {
+		return prefs.getBoolean(PREF_HOLD_SHIFT_FOR_123, true);
+	}
+
+
 	/******** NUMBER KEYS SWIPE LEFT/RIGHT ********/
 
 	private static boolean isValidActionKey(@Nullable String keySuffix) {

@@ -270,7 +270,7 @@ Number keys also support vertical swipes, unless disabled from Settings → Keyp
 - **Swipe up:** Type the letter in the opposite case, for example, "A" instead of "a", or "a" when Caps Lock is on. In Predictive mode, words do not have a separate case for each letter, so swiping up toggles the case of the entire current word between lowercase and capitalized.
 - **Swipe down:** Type the digit of the key, regardless of whether "Number Key Holding" is enabled, or whether holding the key runs a function.
 
-The swipe left and swipe right functions of the 1–9 keys can be changed or disabled both for the Retro and the Modern layout from Settings → Keypad → Key Functions. You can choose between functions such as Add Word, Edit Word, Paste, Undo, Redo, Show Clipboard Tools, Show Settings, Voice Input, and more. The selected functions are indicated by icons in the bottom-left (swipe left) or bottom-right (swipe right) corner of each key.
+The swipe left and swipe right functions of the 1–9 keys can be changed or disabled both for the Retro and the Modern layout from Settings → Keypad → Key Functions. You can choose between functions such as Add Word, Edit Word, Paste, Undo, Redo, Show Clipboard Tools, Show Settings, Voice Input, Switch to 123 Mode, Switch to ABC Mode, Switch to Predictive Mode, and more. The selected functions are indicated by icons in the bottom-left (swipe left) or bottom-right (swipe right) corner of each key.
 
 Swiping up on the 1-key can also type any text of your choice, such as a punctuation mark, a word, or an email address. You can set the text and a short label for it from Settings → Keypad → Key Functions → Key 1. The label is displayed at the top of the key. If you leave it empty, the beginning of the text is displayed instead. The custom text is not available in numeric and phone fields.
 
@@ -292,7 +292,7 @@ Since such texts may be too long to fit on the key, each one can have a short la
 _The custom texts are not available in numeric and phone fields, where the keys keep their default functions._
 
 #### Input Mode Key
-- **Press:** Cycle the input modes (abc → Predictive → 123).
+- **Press:** Switch between Predictive and ABC modes. When in 123 mode, return to the last used one of them. To cycle through all modes (abc → Predictive → 123) instead, disable Settings → Keypad → Key Functions → Input Mode Key Skips 123.
 - **Hold:** Change the typing language when multiple languages have been enabled from the Settings.
 - **Horizontal swipe:** Switch to the last used keyboard, other than TT9.
 - **Vertical swipe:** Open the Android Change Keyboard dialog, where you can select between all installed keyboards.
@@ -302,6 +302,10 @@ The key will display a small globe icon when you have enabled multiple languages
 _In Retro layout, it is the bottom-right key._
 
 _In Modern layout, it is the bottom-left key._
+
+#### Shift Key
+- **Press:** Change the text case.
+- **Hold:** Switch to 123 mode. When in 123 mode, return to the last used text mode (Predictive or ABC). The icon in the top-right corner shows the mode that holding the key will switch to. You can turn this off from Settings → Keypad → Key Functions → Hold Shift for 123 Mode.
 
 #### Backspace
 Deletes characters when pressed. When Settings → Keypad → Fast Delete is enabled, you can swipe back to delete the previous word.
