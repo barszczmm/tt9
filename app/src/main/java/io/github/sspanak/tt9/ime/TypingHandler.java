@@ -300,7 +300,21 @@ public abstract class TypingHandler extends KeyPadHandler {
 		mInputMode.determineNextWordTextCase(surroundingChars[0], -1);
 		updateShiftState(surroundingChars[0], false, false);
 
+		if (shouldGuessNextWordAfterText(text)) {
+			guessNextWord(surroundingChars, text);
+		}
+
 		return true;
+	}
+
+
+	/**
+	 * Typing a space with onText() (for example, by tapping the on-screen space key) finishes the
+	 * current word, so this is a good moment to display next-word predictions, the same way it
+	 * happens when a word is accepted with OK.
+	 */
+	protected boolean shouldGuessNextWordAfterText(@NonNull String text) {
+		return mLanguage != null && mLanguage.hasSpaceBetweenWords() && Characters.getSpace(mLanguage).equals(text);
 	}
 
 
