@@ -43,8 +43,24 @@ jobs:
       with:
         distribution: temurin
         java-version: 21
+    # The gradle-wrapper.jar in the repository is a very old development build, which is not on the
+    # list of official checksums and fails the wrapper validation. So, instead of running it, we
+    # install the official Gradle release that the wrapper would use, and run it directly.
+    - name: Read the Gradle version
+      id: gradle-version
+      run: |
+        version=$(sed -n 's/^distributionUrl=.*gradle-\([0-9][0-9.]*\)-\(bin\|all\)\.zip$/\1/p' gradle/wrapper/gradle-wrapper.properties)
+        if [ -z "$version" ]; then
+          echo "::error::Could not read the Gradle version from gradle/wrapper/gradle-wrapper.properties"
+          exit 1
+        fi
+        echo "Gradle version: $version"
+        echo "version=$version" >> "$GITHUB_OUTPUT"
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v4
+      with:
+        gradle-version: ${{ steps.gradle-version.outputs.version }}
+        validate-wrappers: false # the wrapper is not used, see above
 
     - name: Prepare the signing key
       if: inputs.build_type == 'release'
@@ -60,19 +76,19 @@ jobs:
 
     # validate and build
     - name: Generate Documents
-      run: ./gradlew generateDocs
+      run: gradle generateDocs
     - name: Validate Dictionaries
-      run: ./gradlew validateLanguages
+      run: gradle validateLanguages
     - name: Build Languages
-      run: ./gradlew buildDefinition buildDictionaryDownloads
+      run: gradle buildDefinition buildDictionaryDownloads
     - name: Copy Downloads
-      run: ./gradlew copyDownloadsToAssets
+      run: gradle copyDownloadsToAssets
     - name: Build the 'Full' APK
       env:
         TT9_KEYSTORE_PASSWORD: ${{ secrets.TT9_KEYSTORE_PASSWORD }}
         TT9_KEY_ALIAS: ${{ secrets.TT9_KEY_ALIAS }}
         TT9_KEY_PASSWORD: ${{ secrets.TT9_KEY_PASSWORD }}
-      run: ./gradlew ${{ inputs.build_type == 'release' && 'assembleFullRelease' || 'assembleFullDebug' }}
+      run: gradle ${{ inputs.build_type == 'release' && 'assembleFullRelease' || 'assembleFullDebug' }}
 
     - name: Remove the signing key
       if: always()
