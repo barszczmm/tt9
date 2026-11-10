@@ -151,6 +151,12 @@ abstract public class MainViewHandler extends HotkeyHandler {
 		return inputType.isPhoneNumber();
 	}
 
+	@Override
+	protected boolean shouldGuessNextWordAfterText(@NonNull String text) {
+		return !isTextEditingActive() && !isVoiceInputActive() && super.shouldGuessNextWordAfterText(text);
+	}
+
+
 	public boolean isTextEditingActive() {
 		return mainView != null && mainView.isTextEditingPaletteShown();
 	}
