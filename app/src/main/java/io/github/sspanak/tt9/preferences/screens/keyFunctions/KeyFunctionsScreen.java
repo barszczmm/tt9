@@ -19,6 +19,7 @@ import io.github.sspanak.tt9.commands.CommandCollection;
 import io.github.sspanak.tt9.commands.NullCommand;
 import io.github.sspanak.tt9.preferences.PreferencesActivity;
 import io.github.sspanak.tt9.preferences.screens.BaseScreenFragment;
+import io.github.sspanak.tt9.preferences.screens.textKeys.PreferenceTextKeyValue;
 import io.github.sspanak.tt9.preferences.settings.SettingsStore;
 import io.github.sspanak.tt9.util.Logger;
 
@@ -27,6 +28,7 @@ public class KeyFunctionsScreen extends BaseScreenFragment {
 	private static final String RESET_SWIPE_COMMANDS = "pref_reset_swipe_commands";
 
 	@NonNull private final ArrayList<DropDownPreference> swipeDropDowns = new ArrayList<>();
+	@NonNull private final ArrayList<PreferenceTextKeyValue> swipeUpTextFields = new ArrayList<>();
 
 
 	public KeyFunctionsScreen() { super(); }
@@ -35,6 +37,12 @@ public class KeyFunctionsScreen extends BaseScreenFragment {
 	@Override public String getName() { return NAME; }
 	@Override protected int getTitle() { return R.string.pref_category_key_functions; }
 	@Override protected int getXml() { return R.xml.prefs_screen_key_functions; }
+
+
+	@Override
+	public int getPreferenceCount() {
+		return -1; // prevent scrolling and item selection using the number keys, because there are text fields
+	}
 
 
 	@Override
@@ -55,10 +63,12 @@ public class KeyFunctionsScreen extends BaseScreenFragment {
 		// When restarting the screen, the options are already there. We only need to update them.
 		if (!swipeDropDowns.isEmpty() && screen.findPreference(swipeDropDowns.get(0).getKey()) != null) {
 			refreshSwipeOptions();
+			reloadSwipeUpTextFields();
 			return;
 		}
 
 		swipeDropDowns.clear();
+		swipeUpTextFields.clear();
 
 		final LinkedHashMap<String, String> options = getCommandOptions(activity);
 		final CharSequence[] entries = options.values().toArray(new CharSequence[0]);
@@ -75,6 +85,10 @@ public class KeyFunctionsScreen extends BaseScreenFragment {
 
 			category.addPreference(createSwipeDropDown(activity, actionKey, true, entries, entryValues));
 			category.addPreference(createSwipeDropDown(activity, actionKey, false, entries, entryValues));
+
+			if (SettingsStore.CUSTOM_ACTION_KEY_1.equals(actionKey)) {
+				addSwipeUpTextFields(category);
+			}
 		}
 
 		refreshSwipeOptions();
@@ -103,6 +117,38 @@ public class KeyFunctionsScreen extends BaseScreenFragment {
 
 		swipeDropDowns.add(dropDown);
 		return dropDown;
+	}
+
+
+	/**
+	 * Swiping up on the 1-key has no default function in most languages, so it can be used for typing
+	 * a custom text, the same way as the "!" and "?" keys.
+	 */
+	private void addSwipeUpTextFields(@NonNull PreferenceCategory category) {
+		if (activity == null) {
+			return;
+		}
+
+		PreferenceTextKeyValue text = new PreferenceTextKeyValue(activity);
+		text.setKey(SettingsStore.getTextKeyPreferenceName(SettingsStore.TEXT_KEY_NUMBER_1, SettingsStore.TEXT_KEY_ACTION_SWIPE_UP, false));
+		text.setTitle(R.string.pref_number_key_swipe_up_text);
+		text.setSummary(R.string.pref_number_key_swipe_up_text_summary);
+		category.addPreference(text);
+		swipeUpTextFields.add(text);
+
+		PreferenceTextKeyValue label = new PreferenceTextKeyValue(activity);
+		label.setKey(SettingsStore.getTextKeyPreferenceName(SettingsStore.TEXT_KEY_NUMBER_1, SettingsStore.TEXT_KEY_ACTION_SWIPE_UP, true));
+		label.setTitle(R.string.pref_number_key_swipe_up_label);
+		label.setSummary(R.string.pref_text_key_label_summary);
+		category.addPreference(label);
+		swipeUpTextFields.add(label);
+	}
+
+
+	private void reloadSwipeUpTextFields() {
+		for (PreferenceTextKeyValue field : swipeUpTextFields) {
+			field.reload();
+		}
 	}
 
 
@@ -169,7 +215,9 @@ public class KeyFunctionsScreen extends BaseScreenFragment {
 		reset.setOnPreferenceClickListener(p -> {
 			if (activity != null) {
 				activity.getSettings().resetSwipeCommands();
+				activity.getSettings().resetTextKey(SettingsStore.TEXT_KEY_NUMBER_1);
 				refreshSwipeOptions();
+				reloadSwipeUpTextFields();
 			}
 			return true;
 		});

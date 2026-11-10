@@ -40,6 +40,7 @@ public class SettingsCustomKeyActions extends SettingsUI {
 	// custom text keys ("!" and "?")
 	public static final String TEXT_KEY_LEFT = "left";
 	public static final String TEXT_KEY_RIGHT = "right";
+	public static final String TEXT_KEY_NUMBER_1 = "number_1"; // only swipe up is supported
 	public static final String TEXT_KEY_ACTION_PRESS = "press";
 	public static final String TEXT_KEY_ACTION_SWIPE_UP = "swipe_up";
 	public static final String TEXT_KEY_ACTION_SWIPE_DOWN = "swipe_down";

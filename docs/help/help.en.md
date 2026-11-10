@@ -272,6 +272,8 @@ Number keys also support vertical swipes, unless disabled from Settings → Keyp
 
 The swipe left and swipe right functions of the 1–9 keys can be changed or disabled both for the Retro and the Modern layout from Settings → Keypad → Key Functions. You can choose between functions such as Add Word, Edit Word, Paste, Undo, Redo, Show Clipboard Tools, Show Settings, Voice Input, and more. The selected functions are indicated by icons in the bottom-left (swipe left) or bottom-right (swipe right) corner of each key.
 
+Swiping up on the 1-key can also type any text of your choice, such as a punctuation mark, a word, or an email address. You can set the text and a short label for it from Settings → Keypad → Key Functions → Key 1. The label is displayed at the top of the key. If you leave it empty, the beginning of the text is displayed instead. The custom text is not available in numeric and phone fields.
+
 #### Space Key
 - **Press:** Type a space.
 - **Swipe left or right:** Move the text cursor left or right. The longer you swipe, the further the cursor moves. You can turn this off from Settings → Keypad → Key Functions → Swipe to Move the Cursor.

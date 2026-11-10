@@ -3,7 +3,10 @@ package io.github.sspanak.tt9.ui.main.keys;
 import android.content.Context;
 import android.util.AttributeSet;
 
+import androidx.annotation.Nullable;
+
 import io.github.sspanak.tt9.commands.Command;
+import io.github.sspanak.tt9.preferences.settings.SettingsStore;
 import io.github.sspanak.tt9.util.TextTools;
 
 public class SoftKeyNumber1 extends SoftKeyNumberSwipeable {
@@ -37,6 +40,27 @@ public class SoftKeyNumber1 extends SoftKeyNumberSwipeable {
 		}
 
 		return LARGE_LABEL_TEXT;
+	}
+
+
+	@Nullable
+	@Override
+	protected String getCustomSwipeUpText() {
+		return isCustomTextAllowed() ? tt9.getSettings().getTextKeyText(SettingsStore.TEXT_KEY_NUMBER_1, SettingsStore.TEXT_KEY_ACTION_SWIPE_UP) : null;
+	}
+
+
+	/**
+	 * The short label of the custom swipe up text, if any.
+	 */
+	@Override
+	protected String getTopText() {
+		if (!isCustomTextAllowed()) {
+			return null;
+		}
+
+		final String label = tt9.getSettings().getTextKeyLabel(SettingsStore.TEXT_KEY_NUMBER_1, SettingsStore.TEXT_KEY_ACTION_SWIPE_UP);
+		return label.isEmpty() ? null : label;
 	}
 
 
