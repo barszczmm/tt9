@@ -63,10 +63,13 @@ FG_CROP = FG.crop((x0, y0, x1 + 1, y1 + 1))
 thumb_top = np.nonzero((alpha > 0.5)[:, :int(x0 + (x1 - x0) * 0.25)].any(axis=1))[0].min()
 finger_xs = np.nonzero((alpha[:thumb_top - 20] > 0.5).any(axis=0))[0]
 fx0, fx1 = finger_xs.min(), finger_xs.max()
-# offset of the visual centre from the centre of the cropped image, in source pixels
-CENTRE_OFFSET_X = (fx0 + fx1) / 2 - cx
+# width of one finger: the first continuous run of opaque columns
+finger_width = int(np.argmax(np.diff(finger_xs) > 1)) + 1
+# Offset of the visual centre from the centre of the cropped image, in source pixels. Exactly
+# centring on the fingers looks too far to the left, so we move half a finger back to the right.
+CENTRE_OFFSET_X = (fx0 + fx1) / 2 - cx - finger_width / 2
 new_radius = np.sqrt((xs - (cx + CENTRE_OFFSET_X)) ** 2 + (ys - cy) ** 2).max()
-print('fingers', fx0, fx1, 'centre offset', CENTRE_OFFSET_X, 'max radius from the new centre', new_radius)
+print('fingers', fx0, fx1, 'finger width', finger_width, 'centre offset', CENTRE_OFFSET_X, 'max radius from the new centre', new_radius)
 
 # monochrome: the hand silhouette with the letters cut out
 mono_alpha = alpha.copy()
