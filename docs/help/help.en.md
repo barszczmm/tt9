@@ -270,12 +270,20 @@ Number keys also support vertical swipes, unless disabled from Settings → Keyp
 - **Swipe up:** Type the letter in the opposite case, for example, "A" instead of "a", or "a" when Caps Lock is on. In Predictive mode, words do not have a separate case for each letter, so swiping up toggles the case of the entire current word between lowercase and capitalized.
 - **Swipe down:** Type the digit of the key, regardless of whether "Number Key Holding" is enabled, or whether holding the key runs a function.
 
-If you have Premium, the swipe gestures can be customized or disabled both for the Retro and the Modern layout. You can do this from Settings → Keypad → Key Functions.
+The swipe left and swipe right functions of the 1–9 keys can be changed or disabled both for the Retro and the Modern layout from Settings → Keypad → Key Functions. You can choose between functions such as Add Word, Edit Word, Paste, Undo, Redo, Show Clipboard Tools, Show Settings, Voice Input, and more. The selected functions are indicated by icons in the bottom-left (swipe left) or bottom-right (swipe right) corner of each key.
+
+#### Space Key
+- **Press:** Type a space.
+- **Swipe left or right:** Move the text cursor left or right. The longer you swipe, the further the cursor moves. You can turn this off from Settings → Keypad → Key Functions → Swipe to Move the Cursor.
 
 #### Custom Text Keys ("!" and "?")
 By default, these keys insert their respective punctuation marks. In numeric or phone input fields, they may insert alternative characters such as an asterisk, pound sign, or decimal point.
 
-If you have Premium, these keys can be customized. You may change the default character and assign swipe up, swipe down, swipe left, and swipe right actions. This can be configured from Settings → Keypad → Key Functions.
+These keys can be customized from Settings → Keypad → Key Functions → "!" Key and "?" Key. For each key, you can change what it types when pressed, for example, a comma, a period, or even an entire word. You can also make it type any text when swiping up, down, left, or right, such as your email address or a frequently used phrase.
+
+Since such texts may be too long to fit on the key, each one can have a short label, for example, an envelope emoji (✉) for an email address. The label of the press function replaces the central character, while the swipe labels are displayed at the respective sides of the key. If you leave a label empty, the beginning of the text is displayed instead.
+
+_The custom texts are not available in numeric and phone fields, where the keys keep their default functions._
 
 #### Input Mode Key
 - **Press:** Cycle the input modes (abc → Predictive → 123).

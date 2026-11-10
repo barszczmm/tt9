@@ -41,6 +41,17 @@ public class SoftKeyNumber0 extends SoftKeyNumberSwipeable {
 	}
 
 
+	/**
+	 * The space key can be very wide, so the default threshold, which depends on the key width, would
+	 * require too much finger movement before the text cursor starts moving. Use the smaller of
+	 * the width-based and the height-based thresholds.
+	 */
+	@Override
+	protected float getSwipeXThreshold() {
+		return Math.min(super.getSwipeXThreshold(), getSwipeYThreshold());
+	}
+
+
 	@Override
 	protected int getNumber(int keyId) {
 		return 0;

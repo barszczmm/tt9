@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orderingFromXml="true">
+
+	<PreferenceCategory android:title="@string/pref_category_space_key">
+		<SwitchPreferenceCompat
+			android:defaultValue="true"
+			android:key="pref_move_cursor_with_space"
+			android:summary="@string/pref_move_cursor_with_space_summary"
+			android:title="@string/pref_move_cursor_with_space" />
+	</PreferenceCategory>
+
+	<PreferenceCategory android:title="@string/pref_category_text_keys">
+		<Preference
+			android:fragment="io.github.sspanak.tt9.preferences.screens.textKeys.TextKeyLeftScreen"
+			android:key="screen_text_key_left"
+			android:title="@string/pref_text_key_left" />
+
+		<Preference
+			android:fragment="io.github.sspanak.tt9.preferences.screens.textKeys.TextKeyRightScreen"
+			android:key="screen_text_key_right"
+			android:title="@string/pref_text_key_right" />
+	</PreferenceCategory>
+
+	<PreferenceCategory android:title="@string/pref_category_number_key_swipes">
+		<io.github.sspanak.tt9.preferences.custom.PreferencePlainText
+			android:key="pref_number_key_swipes_info"
+			android:summary="@string/pref_number_key_swipes_summary" />
+
+		<Preference
+			android:key="pref_reset_swipe_commands"
+			android:title="@string/pref_reset_swipe_commands" />
+	</PreferenceCategory>
+
+	<!-- The swipe options for each number key are added dynamically below. -->
+</PreferenceScreen>
