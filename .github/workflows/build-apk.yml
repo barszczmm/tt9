@@ -13,6 +13,10 @@ on:
           - release
           - debug
         default: release
+      languages:
+        description: "Languages to include, separated by spaces, as named in app/languages/definitions (without .yml). English is always included. Leave empty for all languages."
+        type: string
+        default: "English Polish"
 
 permissions:
   contents: read
@@ -74,6 +78,41 @@ jobs:
         echo "$TT9_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/release.jks"
         echo "TT9_KEYSTORE_FILE=$RUNNER_TEMP/release.jks" >> "$GITHUB_ENV"
 
+    # Remove the unwanted languages from this temporary checkout only, so that they are not
+    # validated, built or packed into the APK. The repository is not modified.
+    - name: Remove the unused languages
+      if: inputs.languages != ''
+      env:
+        LANGUAGES: ${{ inputs.languages }}
+      run: |
+        set -euo pipefail
+        cd app/languages
+        keep=" English $LANGUAGES "
+
+        for name in $LANGUAGES; do
+          if [ ! -f "definitions/$name.yml" ]; then
+            echo "::error::Unknown language: '$name'. Available: $(cd definitions && ls *.yml | sed 's/\.yml$//' | tr '\n' ' ')"
+            exit 1
+          fi
+        done
+
+        for file in definitions/*; do
+          name=$(basename "${file%.*}")
+          case "$keep" in *" $name "*) ;; *) rm "$file" ;; esac
+        done
+
+        # keep only the dictionary and n-gram files referenced by the remaining definitions
+        files=$(sed -n 's/^\(dictionaryFile\|ngramFile\):[[:space:]]*\([^[:space:]#]*\).*/\2/p' definitions/*.yml)
+        keep_files=" "
+        for f in $files; do keep_files+="$f ${f%.*}.zip "; done
+
+        for file in dictionaries/* ngrams/* ../../downloads/*; do
+          case "$keep_files" in *" $(basename "$file") "*) ;; *) rm -rf "$file" ;; esac
+        done
+
+        echo "Languages: $(cd definitions && ls | sed 's/\.yml$//' | tr '\n' ' ')"
+        echo "Dictionary files: $(ls dictionaries ngrams ../../downloads | tr '\n' ' ')"
+
     # validate and build
     - name: Generate Documents
       run: gradle generateDocs
@@ -94,9 +133,10 @@ jobs:
       if: always()
       run: rm -f "$RUNNER_TEMP/release.jks"
 
+    # Upload the APK as it is, without zipping it. The artifact is named after the APK file.
     - name: Upload the APK
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
-        name: tt9-full-${{ inputs.build_type }}-${{ github.run_number }}
         path: app/build/outputs/apk/full/${{ inputs.build_type }}/*.apk
+        archive: false
         if-no-files-found: error
