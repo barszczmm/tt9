@@ -1,4 +1,4 @@
-# About This Fork
+# About This Fork (Touch T9)
 This is a personal fork of [Traditional T9](https://github.com/sspanak/tt9). This file describes how the fork is organized and maintained. For everything else about the app, see the [README](README.md).
 
 ## Branches
@@ -52,7 +52,7 @@ If the feature branch gets outdated, merge `master` into it, or rebase it onto `
 
 ## Fork-Only Changes
 These changes exist only for this fork and must not be sent upstream:
-- **Application ID suffix** (`.fork`) and app name "Traditional T9 (Fork)". They allow installing the fork alongside the original app. See `APPLICATION_ID_SUFFIX` in `app/constants.gradle` and `app_name` in `app/src/main/res/values/strings.xml`.
+- **Application ID suffix** (`.fork`) and app name "Touch T9". They allow installing the fork alongside the original app. See `APPLICATION_ID_SUFFIX` in `app/constants.gradle` and `app_name` in `app/src/main/res/values/strings.xml`.
 - **The app icon.** All launcher icons are generated from `fork-assets/logo.jpg` with `fork-assets/make_icons.py` (see the instructions at the top of the script). The adaptive icon uses new resources (`ic_launcher_fork_*`), while the upstream ones are left unused, to avoid conflicts.
 - **The "Build APK" workflow** (`.github/workflows/build-apk.yml`) and the release signing configuration in `app/build.gradle`.
 - `FORK.md`, `CLAUDE.md` and the `fork-assets/` folder.
