@@ -51,5 +51,11 @@ public class KeyPadScreen extends BaseScreenFragment {
 		if (category != null) {
 			category.setVisible(isVisible);
 		}
+
+		// the Small layout has no number keys, so there is nothing to customize
+		final Preference keyFunctions = findPreference("screen_key_functions");
+		if (keyFunctions != null) {
+			keyFunctions.setVisible(activity.getSettings().isMainLayoutLarge());
+		}
 	}
 }

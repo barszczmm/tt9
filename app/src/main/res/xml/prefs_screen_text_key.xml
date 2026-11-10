@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orderingFromXml="true">
+
+	<io.github.sspanak.tt9.preferences.custom.PreferencePlainText
+		android:key="pref_text_key_info"
+		android:summary="@string/pref_text_key_summary" />
+
+	<Preference
+		android:key="pref_reset_text_key"
+		android:title="@string/pref_reset_text_key" />
+
+	<!-- The options for each key action are added dynamically below. -->
+</PreferenceScreen>

@@ -3,6 +3,8 @@ package io.github.sspanak.tt9.ui.main.keys;
 import android.content.Context;
 import android.util.AttributeSet;
 
+import androidx.annotation.NonNull;
+
 import io.github.sspanak.tt9.commands.CmdRedo;
 import io.github.sspanak.tt9.preferences.settings.SettingsStore;
 import io.github.sspanak.tt9.util.chars.Characters;
@@ -30,7 +32,16 @@ public class SoftKeyTextRight extends SoftKeyText {
 		if (tt9.isInputModeNumeric()) return ".";
 		if (tt9.isTextEditingActive()) return CmdRedo.iconTxt;
 
+		final String customText = getCustomText(SettingsStore.TEXT_KEY_ACTION_PRESS);
+		if (!customText.isEmpty()) return customText;
+
 		return Characters.getChar(tt9.getLanguage(), SettingsStore.SOFT_KEY_TEXT_RIGHT_DEFAULT);
+	}
+
+	@NonNull
+	@Override
+	protected String getTextKeyId() {
+		return SettingsStore.TEXT_KEY_RIGHT;
 	}
 
 	@Override

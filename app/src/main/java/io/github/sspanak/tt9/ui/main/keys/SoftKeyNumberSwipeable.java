@@ -13,6 +13,7 @@ import io.github.sspanak.tt9.commands.CmdTogglePredictiveMode;
 import io.github.sspanak.tt9.commands.CmdVoiceInput;
 import io.github.sspanak.tt9.commands.Command;
 import io.github.sspanak.tt9.commands.CommandCollection;
+import io.github.sspanak.tt9.commands.NullCommand;
 import io.github.sspanak.tt9.ime.TraditionalT9;
 import io.github.sspanak.tt9.languages.LanguageKind;
 
@@ -30,6 +31,19 @@ public class SoftKeyNumberSwipeable extends SoftKeyNumber {
 	@Override
 	public void setTT9(TraditionalT9 tt9) {
 		super.setTT9(tt9);
+		updateSwipeable();
+	}
+
+
+	@Override
+	public void render() {
+		// the swipe functions may have been changed from the Settings, so we must recheck them
+		updateSwipeable();
+		super.render();
+	}
+
+
+	private void updateSwipeable() {
 		isSwipeable = false;
 
 		if (tt9 != null) {
@@ -39,7 +53,7 @@ public class SoftKeyNumberSwipeable extends SoftKeyNumber {
 			isSwipeable =
 				tt9.getSettings().getSwipeNumberKeysUpDown()
 				|| (number == 0 && tt9.getSettings().getMoveCursorWithSpace())
-				|| (getNumber() > 0 && !(tt9.getSettings().getSwipeLeftCommand(actionKey).isEmpty() && tt9.getSettings().getSwipeRightCommand(actionKey).isEmpty()));
+				|| (number > 0 && !(NullCommand.ID.equals(tt9.getSettings().getSwipeLeftCommand(actionKey)) && NullCommand.ID.equals(tt9.getSettings().getSwipeRightCommand(actionKey))));
 		}
 	}
 
