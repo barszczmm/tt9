@@ -62,6 +62,8 @@ The other changes (e.g. new keyboard features) are kept in separate branches, so
 ## Building
 The APKs are built manually only: Actions → "Build APK" → "Run workflow". Only the "Full" variant is built, with the dictionaries included. The resulting APK can be downloaded from the "Artifacts" section of the workflow run.
 
+To make the build faster and the APK smaller, only the languages in the "languages" field are included (default: `English Polish`). Use the file names from `app/languages/definitions`, without `.yml`, separated by spaces. English is always included, because the app falls back to it in some cases. Leave the field empty to include all languages. The other languages are only removed from the temporary copy used for the build; the repository is not modified.
+
 Release builds are signed with a key stored in the repository secrets (Settings → Secrets and variables → Actions):
 - `TT9_KEYSTORE_BASE64`: the keystore file, encoded with `base64 -w0 tt9-release.jks`
 - `TT9_KEYSTORE_PASSWORD`
