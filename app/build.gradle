@@ -159,6 +159,7 @@ android {
 
 	defaultConfig {
 		applicationId = PACKAGE_NAME
+		applicationIdSuffix = APPLICATION_ID_SUFFIX
 		buildFeatures.buildConfig = true
 		minSdk = 24
 		targetSdk = 37
