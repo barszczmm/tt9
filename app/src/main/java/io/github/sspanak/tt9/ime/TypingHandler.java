@@ -321,7 +321,7 @@ public abstract class TypingHandler extends KeyPadHandler {
 				lastWord,
 				textField.getSurroundingStringForAutoAssistance(settings, mInputMode),
 				false,
-				-1
+				getNextKeyForText(text)
 			);
 		}
 
@@ -343,6 +343,22 @@ public abstract class TypingHandler extends KeyPadHandler {
 		updateShiftState(surroundingChars[0], false, false);
 
 		return true;
+	}
+
+
+	/**
+	 * When the new text begins with a space (e.g. the on-screen space key was tapped), AutoSpace must
+	 * not add another one after the previous word or punctuation (like "word,"), otherwise we end up
+	 * with two spaces. So we pretend the 0-key (the space key) was pressed, the same way it happens
+	 * when typing a space by pressing 0.
+	 */
+	private int getNextKeyForText(@NonNull String text) {
+		if (text.isEmpty()) {
+			return -1;
+		}
+
+		final int firstChar = text.codePointAt(0);
+		return Character.isWhitespace(firstChar) || Character.isSpaceChar(firstChar) ? 0 : -1;
 	}
 
 
