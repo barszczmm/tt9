@@ -114,6 +114,10 @@ public class SettingsUI extends SettingsTyping {
 		return prefs.getBoolean("pref_swipe_number_keys_up_down", true);
 	}
 
+	public boolean getSimpleSpaceKey() {
+		return prefs.getBoolean("pref_simple_space_key", true);
+	}
+
 	public boolean getHapticFeedback() {
 		return prefs.getBoolean(SwitchHapticFeedback.NAME, SwitchHapticFeedback.DEFAULT);
 	}

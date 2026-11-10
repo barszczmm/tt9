@@ -50,6 +50,12 @@
 			android:key="pref_swipe_number_keys_up_down"
 			android:summary="@string/pref_swipe_number_keys_up_down_summary"
 			android:title="@string/pref_swipe_number_keys_up_down" />
+
+		<SwitchPreferenceCompat
+			android:defaultValue="true"
+			android:key="pref_simple_space_key"
+			android:summary="@string/pref_simple_space_key_summary"
+			android:title="@string/pref_simple_space_key" />
 	</PreferenceCategory>
 
 	<PreferenceCategory android:title="@string/pref_category_keypad_hardware">

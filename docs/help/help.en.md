@@ -272,6 +272,13 @@ Number keys also support vertical swipes, unless disabled from Settings → Keyp
 
 If you have Premium, the swipe gestures can be customized or disabled both for the Retro and the Modern layout. You can do this from Settings → Keypad → Key Functions.
 
+#### Space Key (0-key)
+On the on-screen keypad, the 0-key works as a space bar when typing text:
+- **Press:** Accept the current word (if any) and type a space. No list of special characters is displayed.
+- **Hold:** Display the list of whitespace and special characters (space, new line, punctuation, math characters, etc.), just like pressing 0 on a physical keypad. The first few of them are previewed in the top-right corner of the key.
+
+To restore the classic behavior, where pressing the key displays the list of special characters and holding it types "0", disable Settings → Keypad → Simple Space Key. Physical keypads are not affected by this option.
+
 #### Custom Text Keys ("!" and "?")
 By default, these keys insert their respective punctuation marks. In numeric or phone input fields, they may insert alternative characters such as an asterisk, pound sign, or decimal point.
 
