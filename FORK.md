@@ -53,8 +53,9 @@ If the feature branch gets outdated, merge `master` into it, or rebase it onto `
 ## Fork-Only Changes
 These changes exist only for this fork and must not be sent upstream:
 - **Application ID suffix** (`.fork`) and app name "Traditional T9 (Fork)". They allow installing the fork alongside the original app. See `APPLICATION_ID_SUFFIX` in `app/constants.gradle` and `app_name` in `app/src/main/res/values/strings.xml`.
+- **The app icon.** All launcher icons are generated from `fork-assets/logo.jpg` with `fork-assets/make_icons.py` (see the instructions at the top of the script). The adaptive icon uses new resources (`ic_launcher_fork_*`), while the upstream ones are left unused, to avoid conflicts.
 - **The "Build APK" workflow** (`.github/workflows/build-apk.yml`) and the release signing configuration in `app/build.gradle`.
-- `FORK.md` and `CLAUDE.md`.
+- `FORK.md`, `CLAUDE.md` and the `fork-assets/` folder.
 
 The other changes (e.g. new keyboard features) are kept in separate branches, so they could be offered upstream as pull requests, from their own branch to `sspanak/tt9:master`.
 
