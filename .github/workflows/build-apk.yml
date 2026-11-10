@@ -1,6 +1,8 @@
 name: Build APK
 
 # Runs only when started manually: Actions → "Build APK" → "Run workflow".
+# The upstream workflows (build.yml, close-stale-issues.yml) are kept unchanged, to avoid merge
+# conflicts when syncing with upstream. Disable them from the Actions tab instead.
 on:
   workflow_dispatch:
     inputs:
