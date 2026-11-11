@@ -174,12 +174,6 @@ public class AppHacks {
 			textField.performPrivateCommand("Finish_IME");
 		}
 
-		// Slack chat field with "Send with OK" disabled: type a new line instead of sending.
-		if (action == TextField.IME_ACTION_NEWLINE && inputType != null && textField != null && inputType.isSlackChatField()) {
-			textField.setText("\n");
-			return true;
-		}
-
 		return false;
 	}
 
@@ -274,18 +268,12 @@ public class AppHacks {
 
 		int action = textField != null ? textField.getAction() : EditorInfo.IME_ACTION_UNSPECIFIED;
 
-		final boolean isChatField =
+		if (
 			action != EditorInfo.IME_ACTION_GO && action != EditorInfo.IME_ACTION_SEARCH
 			&& action != EditorInfo.IME_ACTION_PREVIOUS && action != EditorInfo.IME_ACTION_NEXT
-			&& inputType != null && inputType.isChatField();
-
-		// Slack ignores IME_ACTION_SEND and sends the message on ENTER, so we invert the logic there:
-		// keep the default action to send, or make onAction() type a new line instead.
-		if (isChatField && inputType.isSlackChatField()) {
-			return settings.getSendWithEnterInChatApps() ? action : TextField.IME_ACTION_NEWLINE;
-		}
-
-		if (isChatField && settings.getSendWithEnterInChatApps()) {
+			&& settings.getSendWithEnterInChatApps()
+			&& inputType != null && inputType.isChatField()
+		) {
 			return EditorInfo.IME_ACTION_SEND;
 		}
 

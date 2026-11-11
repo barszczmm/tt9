@@ -103,18 +103,6 @@ public class InputType extends StandardInputType {
 
 
 	/**
-	 * isSlackChatField
-	 * Slack sends the message on ENTER and ignores IME_ACTION_SEND, so "Send with OK" works backwards
-	 * there. Only the message composer is affected. Search, profile and other fields must keep their
-	 * own actions. See AppHacks.getEditorAction().
-	 * <a href="https://github.com/sspanak/tt9/issues/1209">#1209</a>
-	 */
-	public boolean isSlackChatField() {
-		return field != null && "com.Slack".equals(field.packageName) && isChatField();
-	}
-
-
-	/**
 	 * isKyoceraDoneField
 	 * Kyocera system apps (e.g. the "Create Mail" full-screen editor in jp.kyocera.fpmail) declare
 	 * IME_ACTION_DONE, sometimes together with IME_FLAG_NO_ENTER_ACTION, but ignore the action itself.
