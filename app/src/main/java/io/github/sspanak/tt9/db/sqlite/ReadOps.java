@@ -1,6 +1,7 @@
 package io.github.sspanak.tt9.db.sqlite;
 
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDoneException;
 import android.database.sqlite.SQLiteStatement;
@@ -37,6 +38,29 @@ public class ReadOps {
 	 */
 	public boolean exists(@NonNull SQLiteDatabase db, @NonNull Language language, @NonNull String word, @NonNull String sequence) {
 		return getWord(db, language, word, sequence) != null || customWordExists(db, language, word, sequence);
+	}
+
+
+	/**
+	 * Checks if a word was added by the user. getWord() can not find such words, because they are
+	 * not in the word positions table. The case variants are the same as in getWord().
+	 */
+	private boolean customWordExists(@NonNull SQLiteDatabase db, @NonNull Language language, @NonNull String word, @NonNull String sequence) {
+		if (sequence.isEmpty() || word.isEmpty()) {
+			return false;
+		}
+
+		final SQLiteStatement query = CompiledQueryCache.get(
+			db,
+			"SELECT COUNT(*) FROM " + Tables.CUSTOM_WORDS + " WHERE langId = ? AND sequence = ? AND word IN(?,?,?)"
+		);
+		query.bindLong(1, language.getId());
+		query.bindString(2, sequence);
+		query.bindString(3, word);
+		query.bindString(4, word.toLowerCase(language.getLocale()));
+		query.bindString(5, word.toUpperCase(language.getLocale()));
+
+		return query.simpleQueryForLong() > 0;
 	}
 
 
@@ -95,29 +119,6 @@ public class ReadOps {
 
 
 	/**
-	 * Checks if a word was added by the user. getWord() can not find such words, because they are
-	 * not in the word positions table. The case variants are the same as in getWord().
-	 */
-	private boolean customWordExists(@NonNull SQLiteDatabase db, @NonNull Language language, @NonNull String word, @NonNull String sequence) {
-		if (sequence.isEmpty() || word.isEmpty()) {
-			return false;
-		}
-
-		final SQLiteStatement query = CompiledQueryCache.get(
-			db,
-			"SELECT COUNT(*) FROM " + Tables.CUSTOM_WORDS + " WHERE langId = ? AND sequence = ? AND word IN(?,?,?)"
-		);
-		query.bindLong(1, language.getId());
-		query.bindString(2, sequence);
-		query.bindString(3, word);
-		query.bindString(4, word.toLowerCase(language.getLocale()));
-		query.bindString(5, word.toUpperCase(language.getLocale()));
-
-		return query.simpleQueryForLong() > 0;
-	}
-
-
-	/**
 	 * Gets the timestamp of the language file at the time of the last import into the database.
 	 */
 	public String getLanguageFileHash(@NonNull SQLiteDatabase db, int langId) {
@@ -136,22 +137,42 @@ public class ReadOps {
 	}
 
 
-	public ArrayList<CustomWord> getCustomWords(@NonNull SQLiteDatabase db, @NonNull String wordFilter, int maxWords) {
+	public long countCustomWords(@NonNull SQLiteDatabase db, @NonNull String wordFilter) {
+		if (wordFilter.isEmpty()) {
+			return countCustomWords(db);
+		}
+
+		return DatabaseUtils.longForQuery(
+			db,
+			"SELECT COUNT(*) FROM " + Tables.CUSTOM_WORDS + " WHERE word LIKE ?",
+			new String[]{wordFilter + "%"}
+		);
+	}
+
+
+	/**
+	 * Returns custom words starting with "wordFilter", sorted alphabetically. Use "maxWords" and
+	 * "offset" for pagination. maxWords <= 0 means no limit.
+	 */
+	public ArrayList<CustomWord> getCustomWords(@NonNull SQLiteDatabase db, @NonNull String wordFilter, int maxWords, int offset) {
 		ArrayList<CustomWord> words = new ArrayList<>();
 
 		String[] select = new String[]{"word", "sequence", "langId"};
 		String where = "word LIKE ?";
 		String[] whereArgs = new String[]{wordFilter + "%"};
-		String limit = maxWords > 0 ? String.valueOf(maxWords) : null;
-		String orderBy = maxWords > 0 ? null : "word";
+		String limit = maxWords > 0 ? Math.max(offset, 0) + "," + maxWords : null;
 
-		try (Cursor cursor = db.query(Tables.CUSTOM_WORDS, select, where, whereArgs, null, null, orderBy, limit)) {
+		try (Cursor cursor = db.query(Tables.CUSTOM_WORDS, select, where, whereArgs, null, null, "word COLLATE NOCASE, word", limit)) {
 			while (cursor.moveToNext()) {
-				words.add(new CustomWord(
-					cursor.getString(0),
-					cursor.getString(1),
-					(int) cursor.getLong(2)
-				));
+				try {
+					words.add(new CustomWord(
+						cursor.getString(0),
+						cursor.getString(1),
+						(int) cursor.getLong(2)
+					));
+				} catch (IllegalArgumentException ex) {
+					Logger.w(LOG_TAG, "Cannot load word '" + cursor.getString(0) + "' with invalid sequence or characters for language " + cursor.getLong(2) + ". " + ex);
+				}
 			}
 		}
 
